@@ -1,0 +1,16 @@
+      
+     prob           
+ WARNING!!  DID NOT RECOGNIZE MPa            
+ WARNING!!  DID NOT RECOGNIZE Engine         
+case=2 o/f=2.5,2.6,2.7,2.8,2.9,3,3.1,3.2,3.3,3.4,3.5 rocket equilibrium frozen nfz=1 tcest,k=3800                       
+p,bar=20                                                                                                                
+pi/pe=19.7384653343                                                                                                     
+      
+     reac           
+fuel=CH4(L) wt=1                                                                                                        
+oxid=O2(L) wt=1                                                                                                         
+      
+     outp           
+short plot o/f isp                                                                                                      
+      
+     end            

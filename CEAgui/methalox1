@@ -1,0 +1,9 @@
+problem   case=Methalox o/f=3.5,
+      rocket  fac   ac/at=6  t,k=3250
+  p,bar=20,
+  pi/p=50,75.4788,100,
+  sup,ae/at=5,9.3239,15,
+react  
+  fuel=CH4(L) wt=1  t,k=110  
+  oxid=O2(L) wt=3.5  t,k=90  
+end

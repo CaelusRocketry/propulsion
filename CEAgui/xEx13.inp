@@ -1,0 +1,9 @@
+prob
+rocket case=13 p,psia=3000, pi/p=3,10,30,300 equilibrium %fuel=67.
+react 
+  fuel=N2H4(L) wt=80 t,k=298.15
+  fuel=Be(a) wt=20 t,k=298.15
+  oxid=H2O2(L) wt=100 t,k=298.15
+output  
+     trace=1.e-10 calories
+end

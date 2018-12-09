@@ -1,0 +1,7 @@
+ C2H5OH(L) 
+ H2O(L) 
+ O2(L) 
+ ENDR
+   
+    
+    

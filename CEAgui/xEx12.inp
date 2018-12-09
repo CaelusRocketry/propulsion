@@ -1,0 +1,24 @@
+#  EXAMPLE 12:
+#     (a)  Infinite-area rocket problem (rocket).
+#     (b)  The fuel is monomethyl hydrazine (CH6N2(L)) and the oxidant is 
+#          nitrogen tetroxide (N2O4(L)) at 298.15 K.  Enthalpies and 
+#          "exploded" formulas are to be taken from thermo.lib.
+#     (c)  The density of the reactant mixture is desired.  This requires
+#          the individual densities be given with the reactant data
+#          (rho,g/cc = .874 and rho,g/cc == 1.431).
+#     (d)  The oxidant-to-fuel weight ratio is 2.5 (o/f=2.5).
+#     (e)  Chamber pressure is 1000 psia (p,psia=1000).
+#     (f)  Equilibrium and frozen calculations are to be performed with
+#          freezing at the throat (nfz=2).
+#     (g)  For exit points one pressure ratio (pi/p=68.0457) and four
+#          supersonic area ratios (supersonic=10,50,100,200) are given.
+
+reac fuel = CH6N2(L)     rho,g/cc = .874    
+     oxid = N2O4(L)      rho,g/cc = 1.431    
+prob  rocket  case=12  p,psia =1000, pi/p=68.0457,  eql frozen nfz=2
+       supersonic=5,10,25,50,75,100,150,200, o/f= 2.5,
+only  CO    CO2   H   HNO  HNO2  HO2   H2    H2O   H2O2  N     NO    NO2
+     N2    N2O   O  OH  O2    HCO   NH    CH4  NH2  NH3  H2O(L)  C(gr)
+output  siunits  massf  plot aeat t p ivac isp mach cf  
+end
+
