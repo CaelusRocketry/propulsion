@@ -1,5 +1,7 @@
 # Supersonic Nozzle Design Calculation Program
-# Project Caelus
+# Created by Jason Chen, Project Caelus
+# Thomas Jefferson High School for Science and Technology
+# Developed on April 22nd, 2018
 
 """
 

@@ -1,5 +1,7 @@
 # Supersonic Nozzle Design Calculation Program
-# Project Caelus
+# Created by Jason Chen, Project Caelus
+# Thomas Jefferson High School for Science and Technology
+# Developed on April 22nd, 2018
 
 """
 
@@ -124,7 +126,7 @@ def calc_readings():
         Ae = ER * At
         Rt = sqrt(At / pi)
         Re = sqrt(Ae / pi)
-        Ac = Ae
+        Ac = At*8
         Rc = sqrt((Ac) / pi)
         Lc = ((At) * Lstar) / (Ac)
         Ldn = ((Re) - (Rt)) / (tan(radians(15)))
