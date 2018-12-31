@@ -17,10 +17,6 @@ ALL CALCULATIONS ARE DONE IN STANDARD IMPERIAL (SI) UNITS, WITH TEMPERATURE IN K
 ANGLES IN DEGREES.
 -------------------------------------------------------------------------------------
 
-------------------------------------
-Press (Ctrl + R) to run the program.
-------------------------------------
-
 
 CALCULATION ASSUMPTIONS:
     1) Flow maintains equilibrium at the local pressure and enthalpy level (reversible).
@@ -38,7 +34,7 @@ CALCULATION ASSUMPTIONS:
         perpendicular to the nozzle axis.
     13) Nozzle dimensions assume an optimum divergence half-angle of 15 degrees, and an
         optimum convergence half-angle of 45 degrees.
-    14) Contraction ratio (cross-sectional area of the chamber/area of the throat) of 4.
+    14) Contraction ratio (cross-sectional area of the chamber/area of the throat) of 8.
 
 INPUTS:
     - F = Desired thrust, N
