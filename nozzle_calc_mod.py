@@ -72,13 +72,53 @@ OUTPUTS:
 from math import sqrt, tan, radians, pi
 
 
+def prompt():
+    global outarray
+    print("\n ----------------------------------------------------------------------",
+          "\n", "Take parameters through keyboard inputs or from text file (input.txt)?",
+          "\n ----------------------------------------------------------------------")
+    prompt = input("Enter INPUT or FILE: ")
+    if(prompt == ("INPUT")):
+        print("\n")
+        calc_readings()
+    elif(prompt == ("FILE")):
+        outarray = []
+        try:
+            with open("input.txt") as file:
+                line = file.readline().strip()
+                while line:
+                    count = 0
+                    for char in line:
+                        if char == (":"):
+                            out = line[count+1:]
+                            outarray.append(float(out))
+                            break
+                        count += 1
+                    line = file.readline().strip()
+            file.close()
+            calc_text()
+        except IOError:
+            print("\n", "Error reading file. Please make sure input.txt exists in the"
+                  " correct directory.")
+        except ValueError:
+            print("\n", "Error while attempting to solve. Please make sure every input"
+                        " is a numeric value and/or has inputs.")
+    else:
+        print("\n", "Invalid! Please enter INPUT or FILE to select your desired"
+              " input method.")
+
+
 def take_input(s):
     """
     Prompt input from user.
     :param s: The message to display to the user.
     :return: The user's input as a `float`.
     """
-    return float(input(s))
+    try:
+        return float(input(s))
+    except ValueError:
+        print("\n", "Please make sure every input is a numeric value.")
+        exit(0)
 
 
 def print_header(string, key=lambda: 30):
@@ -93,8 +133,9 @@ def print_header(string, key=lambda: 30):
 
 def calc_readings():
     """
-    Main function to calculate readings.
+    Defines user parameters from user input and calls a calculation.
     """
+    global F, P0, P3, OF, T0, M, k, Lstar
     F = take_input("Desired thrust (N): ")
     P0 = take_input("Chamber pressure (Pa): ")
     P3 = take_input("Ambient pressure at specific altitude (Pa): ")
@@ -103,7 +144,27 @@ def calc_readings():
     M = take_input("Gas molecular mass (kg/mol): ")
     k = take_input("Ratio of specific heats (cp/cv): ")
     Lstar = take_input("Characteristic chamber length (L*, in meters): ")
+    calculate()
 
+def calc_text():
+    """
+    Defines user parameters from text file and calls a calculation.
+    """
+    global F,P0,P3,OF,T0,M,k,Lstar
+    F = outarray[0]
+    P0 = outarray[1]
+    P3 = outarray[2]
+    OF = outarray[3]
+    T0 = outarray[4]
+    M = outarray[5]
+    k = outarray[6]
+    Lstar = outarray[7]
+    calculate()
+
+def calculate():
+    """
+    Attempts to calculate and print values.
+    """
     try:  # Attempt to calculate values
         R = (8314.3 / M)
         PR = (P3 / P0)
@@ -122,7 +183,7 @@ def calc_readings():
         Ae = ER * At
         Rt = sqrt(At / pi)
         Re = sqrt(Ae / pi)
-        Ac = At*8
+        Ac = At * 8
         Rc = sqrt((Ac) / pi)
         Lc = ((At) * Lstar) / (Ac)
         Ldn = ((Re) - (Rt)) / (tan(radians(15)))
@@ -160,11 +221,9 @@ def calc_readings():
         print("Length of the diverging nozzle: ", "%.7f" % Ldn, "m")
         print("Length of the converging nozzle: ", "%.7f" % Lcn, "m")
 
-    except ValueError or ZeroDivisionError:  # Exception thrown
-        print("\n", "ERROR!", "\n", "-----------------------------------------------",
-              "\n", "Please enter a valid value for every parameter!",
-              "\n", "-----------------------------------------------")
-
+    except (ValueError, ZeroDivisionError):  # Exception thrown
+        print("\n", "Error while attempting to solve. Please enter a valid value"
+              " for every parameter.")
 
 if __name__ == "__main__":
-    calc_readings()
+    prompt()
