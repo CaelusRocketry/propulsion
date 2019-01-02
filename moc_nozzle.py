@@ -43,7 +43,7 @@ INPUTS:
     - M = Molecular mass of the gas, kg/mol
     - M = Desired exit Mach number, dimensionless
     - Rt = Throat radius, mm
-    - k = Ratio of specific heats, cp/cv, dimensionless
+    - k = Ratio of specific heat capacities, cp/cv, dimensionless
 
 OUTPUTS:
     - Set of (x,y) points representing the diverging nozzle contour.
@@ -52,7 +52,7 @@ OUTPUTS:
     - Plots of the characteristic lines generated (FEATURE NOT AVAILABLE AT THIS TIME).
 
 """
-from math import atan
+from math import atan, exp, sqrt
 import numpy as np
 
 def prompt():
@@ -92,16 +92,61 @@ def calc_readings():
     """
     Defines user parameters from user input and calls a calculation.
     """
-    global F, P0, P3, T0, M, k
+    global F, P0, ALT, T0, M, k
     F = take_input("Desired thrust (N): ")
     P0 = take_input("Chamber pressure (Pa): ")
-    P3 = take_input("Ambient pressure at specific altitude (Pa): ")
+    ALT = take_input("Altitude (m): ")
     T0 = take_input("Combustion chamber temperature (K): ")
     M = take_input("Gas molecular mass (kg/mol): ")
     k = take_input("Ratio of specific heats (cp/cv): ")
     calculate()
 
+def exit_pressure(h):
+    """
+    Sourced from NASA Glenn Research Center's Earth Atmosphere Model.
+    Computes and sets the ambient pressure, P3, based on inputted altitude (meters).
+    P3 has units in pascals. Note: The intermediate temperature calculations use Celsius.
+    :param h: Altitude, in meters.
+    """
+    global P3
+    if (h >= 25000):  # Upper Stratosphere
+        T = -131.21 + 0.00299 * h
+        P3 = (2.488 * ((T + 273.1) / 216.6) ** (-11.388))/1000
+    elif (11000 < h < 25000):  # Lower Stratosphere
+        T = -56.46
+        P3 = (22.65 * exp(1.73 - 0.000157 * h))/1000
+    else: # Troposphere
+        T = 15.04 - 0.00649 * h
+        P3 = (101.29 * ((T + 273.1) / 288.08) ** (5.256))/1000
+
+def PMfunct(gamma, mach):
+    """
+    Computes the Prandtl-Meyer angle based on the inputted local Mach number and ratio of
+    specific heat capacities. The Prandtl-Meyer angle is the maximum angle at which a sonic
+    flow (Mnum = 1) can turn a convex corner isentropically (without producing a shock).
+    :param gamma: Ratio of specific heat capacities, dimensionless
+    :param mach: Local Mach number, dimensionless
+    :return: The Prandtl-Meyer angle, radians
+    """
+    sect1 = (gamma+1)/(gamma-1)
+    sect2 = (mach**2)-1
+    PMangle = sqrt(sect1)*atan(sqrt(sect1*sect2)) - atan(sqrt(sect2))
+    return PMangle
+
 def calculate():
+    exit_pressure(ALT)
+    PR = P3/P0 # Pressure ratio
+    TR = PR**((k-1)/k) # Temperature ratio
+    R = (8314.3/M) # Gas constant
+    CTt = (2*k*R*T0)/(k-1) # Critical throat temperature (disputed equation?)
+    CTp = ((2/(k+1))**(k/(k-1)))*P0 # Critical throat pressure
+    CTv = sqrt((2*k*R*T0)/(k+1)) # Critical throat velocity
+    v2 = sqrt((CTt)*(1-TR)) # Exit velocity
+    mdot = F/v2 # Mass flow rate
+    T2 = T0*TR # Exit temperature
+    a2 = sqrt(k*R*T2) # Exit speed of sound
+    Mnum2 = v2/a2 # Exit Mach number
+
 
 if __name__ == "__main__":
     prompt()

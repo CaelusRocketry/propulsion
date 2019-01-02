@@ -44,7 +44,7 @@ INPUTS:
     - O/F = Oxidizer to fuel ratio, dimensionless
     - T0 = Combustion chamber temperature, K
     - M = Molecular mass of the gas, kg/mol
-    - k = Ratio of specific heats, cp/cv, dimensionless
+    - k = Ratio of specific heat capacities, cp/cv, dimensionless
     - L* = Characteristic chamber length, m
 
 OUTPUTS:
