@@ -150,7 +150,7 @@ def calc_text():
     """
     Defines user parameters from text file and calls a calculation.
     """
-    global F,P0,P3,OF,T0,M,k,Lstar
+    global F, P0, P3, OF, T0, M, k, Lstar
     F = outarray[0]
     P0 = outarray[1]
     P3 = outarray[2]
