@@ -39,7 +39,7 @@ CALCULATION ASSUMPTIONS:
 INPUTS:
     - F = Desired thrust, N
     - P0 = Chamber pressure, Pa
-    - P3 = Ambient pressure, Pa
+    - ALT = Altitude, m
     - O/F = Oxidizer to fuel ratio, dimensionless
     - T0 = Combustion chamber temperature, K
     - M = Molecular mass of the gas, kg/mol
@@ -69,7 +69,7 @@ OUTPUTS:
 """
 
 # Imports
-from math import sqrt, tan, radians, pi
+from math import sqrt, tan, radians, degrees, pi, exp
 
 
 def prompt():
@@ -135,10 +135,10 @@ def calc_readings():
     """
     Defines user parameters from user input and calls a calculation.
     """
-    global F, P0, P3, OF, T0, M, k, Lstar
+    global F, P0, ALT, OF, T0, M, k, Lstar
     F = take_input("Desired thrust (N): ")
     P0 = take_input("Chamber pressure (Pa): ")
-    P3 = take_input("Ambient pressure at specific altitude (Pa): ")
+    ALT = take_input("Altitude (m): ")
     OF = take_input("Oxidizer to fuel ratio: ")
     T0 = take_input("Combustion chamber temperature (K): ")
     M = take_input("Gas molecular mass (kg/mol): ")
@@ -160,6 +160,24 @@ def calc_text():
     k = outarray[6]
     Lstar = outarray[7]
     calculate()
+
+def exit_pressure(h):
+    """
+    Sourced from NASA Glenn Research Center's Earth Atmosphere Model.
+    Computes and sets the ambient pressure, P3, based on inputted altitude (meters).
+    P3 has units in pascals. Note: The intermediate temperature calculations use Celsius.
+    :param h: Altitude, in meters.
+    """
+    global P3
+    if (h >= 25000):  # Upper Stratosphere
+        T = -131.21 + 0.00299 * h
+        P3 = (2.488 * ((T + 273.1) / 216.6) ** (-11.388))/1000
+    elif (11000 < h < 25000):  # Lower Stratosphere
+        T = -56.46
+        P3 = (22.65 * exp(1.73 - 0.000157 * h))/1000
+    else: # Troposphere
+        T = 15.04 - 0.00649 * h
+        P3 = (101.29 * ((T + 273.1) / 288.08) ** (5.256))/1000
 
 def calculate():
     """
@@ -192,6 +210,7 @@ def calculate():
         print_header("INPUTS")
         print("Thrust: ", F, "N")
         print("Chamber pressure: ", P0, "Pa")
+        print("Altitude: ", ALT, "m")
         print("Ambient pressure: ", P3, "Pa")
         print("O/F ratio:", OF)
         print("Combustion temperature:", T0, "K")

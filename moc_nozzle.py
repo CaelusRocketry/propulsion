@@ -41,8 +41,6 @@ INPUTS:
     - P3 = Ambient pressure, Pa
     - T0 = Combustion chamber temperature, K
     - M = Molecular mass of the gas, kg/mol
-    - M = Desired exit Mach number, dimensionless
-    - Rt = Throat radius, mm
     - k = Ratio of specific heat capacities, cp/cv, dimensionless
 
 OUTPUTS:
@@ -52,7 +50,7 @@ OUTPUTS:
     - Plots of the characteristic lines generated (FEATURE NOT AVAILABLE AT THIS TIME).
 
 """
-from math import atan, exp, sqrt
+from math import atan, exp, sqrt, pi
 import numpy as np
 
 def prompt():
@@ -61,7 +59,8 @@ def prompt():
           "\n ----------------------------------------------------------------------")
     prompt = input("Enter INPUT or EXCEL: ")
     if(prompt == "INPUT"):
-
+        print("\n")
+        calc_readings()
     elif(prompt == "EXCEL"):
 
     else:
@@ -99,6 +98,10 @@ def calc_readings():
     T0 = take_input("Combustion chamber temperature (K): ")
     M = take_input("Gas molecular mass (kg/mol): ")
     k = take_input("Ratio of specific heats (cp/cv): ")
+    n = take_input("Number of characteristics (>2) emanating from throat: ")
+    if(n<=2):
+        print("\n", "Number of characteristics must be greater than 2!")
+        exit(0)
     calculate()
 
 def exit_pressure(h):
@@ -133,6 +136,25 @@ def PMfunct(gamma, mach):
     PMangle = sqrt(sect1)*atan(sqrt(sect1*sect2)) - atan(sqrt(sect2))
     return PMangle
 
+def invPMfunct(v):
+    """
+    Approximation of the inverse Prandtl-Meyer function, most accurate for k = 1.2
+    Sourced from I. M. Hall's "Inversion of the Prandtl-Meyer relation." from the
+    Aeronautical Journal 79 (1975): 417. (http://www.pdas.com/pm.pdf)
+    :param v: The Prandtl-Meyer angle, in radians
+    :return: Local Mach number, dimensionless
+    """
+    A = 1.3604
+    B = 0.0962
+    C = -0.5127
+    D = -0.6722
+    E = -0.3278
+
+    v_0 = (pi/2)*(sqrt(6)-1)
+    y = (v/v_0)**(2/3)
+    mach = (1 + A*y + B*(y**2) + C*(y**3))/(1 + D*y + E*(y**2))
+    return mach
+
 def calculate():
     exit_pressure(ALT)
     PR = P3/P0 # Pressure ratio
@@ -146,7 +168,8 @@ def calculate():
     T2 = T0*TR # Exit temperature
     a2 = sqrt(k*R*T2) # Exit speed of sound
     Mnum2 = v2/a2 # Exit Mach number
-
+    At = (mdot*(sqrt(k*R*T0))) / (k*P0*(sqrt(((2/(k+1)) ** ((k+1)/(k-1)))))) # Throat area
+    Rt = sqrt(At / pi) # Throat radius
 
 if __name__ == "__main__":
     prompt()
