@@ -50,7 +50,7 @@ OUTPUTS:
     - Plots of the characteristic lines generated (FEATURE NOT AVAILABLE AT THIS TIME).
 
 """
-from math import atan, exp, sqrt, pi
+from math import atan, asin, exp, sqrt, radians, degrees, pi
 import numpy as np
 
 def prompt():
@@ -91,7 +91,7 @@ def calc_readings():
     """
     Defines user parameters from user input and calls a calculation.
     """
-    global F, P0, ALT, T0, M, k
+    global F, P0, ALT, T0, M, k, n
     F = take_input("Desired thrust (N): ")
     P0 = take_input("Chamber pressure (Pa): ")
     ALT = take_input("Altitude (m): ")
@@ -155,8 +155,21 @@ def invPMfunct(v):
     mach = (1 + A*y + B*(y**2) + C*(y**3))/(1 + D*y + E*(y**2))
     return mach
 
+def mu(mach):
+    """
+    Computes the Mach angle, or the angle at which Mach waves propagate with respect to
+    the flow, based on the local Mach number
+    :param mach: Mach number of the flow, dimensionless
+    :return: The Mach angle, mu
+    """
+    mach_angle = asin(1/degrees(mach))
+    return mach_angle
+
 def calculate():
     exit_pressure(ALT)
+
+    # Isentropic flow relations
+
     PR = P3/P0 # Pressure ratio
     TR = PR**((k-1)/k) # Temperature ratio
     R = (8314.3/M) # Gas constant
@@ -170,6 +183,17 @@ def calculate():
     Mnum2 = v2/a2 # Exit Mach number
     At = (mdot*(sqrt(k*R*T0))) / (k*P0*(sqrt(((2/(k+1)) ** ((k+1)/(k-1)))))) # Throat area
     Rt = sqrt(At / pi) # Throat radius
+
+    # Method of Characteristics
+
+    # The maximum turn angle, theta_max, is one-half the Prandtl_Meyer angle:
+    theta_max = degrees((1/2)*PMfunct(Mnum2, k))
+
+    # The angle interval, dtheta (delta theta), given n (number of divisions):
+    dtheta = theta_max/n
+
+
+
 
 if __name__ == "__main__":
     prompt()
