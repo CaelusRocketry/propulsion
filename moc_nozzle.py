@@ -165,6 +165,10 @@ def mu(mach):
     mach_angle = asin(1/degrees(mach))
     return mach_angle
 
+def moc2d(theta_max, theta_0, n):
+    dtheta = (theta_max-theta_0)/(n-1) # Delta theta; angle interval
+    
+
 def calculate():
     exit_pressure(ALT)
 
@@ -189,8 +193,8 @@ def calculate():
     # The maximum turn angle, theta_max, is one-half the Prandtl_Meyer angle:
     theta_max = degrees((1/2)*PMfunct(Mnum2, k))
 
-    # The angle interval, dtheta (delta theta), given n (number of divisions):
-    dtheta = theta_max/n
+    # The angle interval, given n (number of divisions):
+    theta_0 = theta_max/n
 
 
 
