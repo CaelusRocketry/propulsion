@@ -6,7 +6,9 @@
 """
 
 This program generates a minimum-length supersonic diverging nozzle contour using the
-Method of Characteristics.
+Method of Characteristics. Equations and methods are derived from the von Karman
+Institute's "Aerothermodynamics of High Speed Flows, Lecture 5". References in any
+comments throughout this code to equations or pages are based on the lecture's slideshow.
 
 -------------------------------------------------------------------------------------
 ALL CALCULATIONS ARE DONE IN STANDARD IMPERIAL (SI) UNITS, WITH TEMPERATURE IN KELVIN.
@@ -167,7 +169,26 @@ def mu(mach):
 
 def moc2d(theta_max, theta_0, n):
     dtheta = (theta_max-theta_0)/(n-1) # Delta theta; angle interval
-    
+    nodes = 0.5*n*(4+n-1) # Nodes, or points, that need to be calculated given n
+
+    v = np.zeros(nodes) # Array of zeros for Prandtl-Meyer angles
+    KL = np.zeros(nodes) # Array of zeros for left-running characteristics
+    KR = np.zeros(nodes) # Array of zeros for right-running characteristics
+    theta = np.zeros(nodes) # Array of zeros for local flow angles
+
+    # First n points in each array are the parameters of characteristics emanating
+    # solely from the sharp corner at the throat (see Page 30).
+    for i in range(0,n+1):
+        theta[i] = theta_0 + (i-1) * dtheta
+        v[i] = theta[i] # At the throat, theta(a) = v(M(a))
+        KL[i] = theta[i] - v[i] # Standard left characteristic equation
+        KR[i] = theta[i] + v[i] # Standard right characteristic equation
+
+    i = n+1
+    theta[i] = theta[i-1]
+    v[i] = v[i-1]
+    KL[i] = KL[i-1]
+    KR[i] = KR[i-1]
 
 def calculate():
     exit_pressure(ALT)

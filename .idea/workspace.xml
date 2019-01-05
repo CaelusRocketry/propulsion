@@ -34,8 +34,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/moc_nozzle.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2856">
-              <caret line="169" column="4" selection-start-line="169" selection-start-column="4" selection-end-line="169" selection-end-column="4" />
+            <state relative-caret-position="328">
+              <caret line="191" lean-forward="true" selection-start-line="191" selection-end-line="191" />
             </state>
           </provider>
         </entry>
@@ -46,9 +46,14 @@
     <findStrings>
       <find>def tak</find>
       <find>.equals</find>
+      <find>)</find>
+      <find>i</find>
+      <find>(</find>
+      <find>;</find>
     </findStrings>
     <replaceStrings>
       <replace>==</replace>
+      <replace>n+1</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -155,8 +160,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/moc_nozzle.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2856">
-          <caret line="169" column="4" selection-start-line="169" selection-start-column="4" selection-end-line="169" selection-end-column="4" />
+        <state relative-caret-position="328">
+          <caret line="191" lean-forward="true" selection-start-line="191" selection-end-line="191" />
         </state>
       </provider>
     </entry>
