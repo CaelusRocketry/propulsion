@@ -47,12 +47,12 @@ Rt = sqrt(At / pi)*1000; % Throat radius in mm
 theta_max = rad2deg((1/2)*PMfunct(Mnum2, k)); % Maximum wall angle
 theta_0 = theta_max/n; % First expansion fan is delta theta, i.e theta interval
 
-[v,KL,KR,theta,Kangle] = incidentSolve(theta_max,theta_0,n);
+[v,KL,KR,theta,Kangle] = solveK(theta_max,theta_0,n);
 %% Plot Incident Expansion Waves
 x1 = 0;
 y1 = Rt;
 for i=1:n
-    %Equation of the line = Kangle(i)*x + Rt
+    % Equation of the KR line from nozzle throat = Kangle(i)*x + Rt
     y = [Rt 0];
     x = [0, (-Rt)/Kangle(i)];
     plot(x,y,'color','blue')
@@ -68,7 +68,8 @@ hold off;
 % KR = Right-running characteristic constant
 % theta = Flow angle relative to horizontal
 % Kangle = Angle of characteristic relative to horizontal
-function [v,KL,KR,theta,Kangle] = incidentSolve(theta_max,theta_0,n)
+function [v,KL,KR,theta,Kangle] = solveK(theta_max,theta_0,n)
+
 dtheta = (theta_max - theta_0)/(n-1);
 theta = zeros(1,n);
 v = zeros(1,n);
