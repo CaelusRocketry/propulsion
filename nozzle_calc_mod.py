@@ -144,6 +144,7 @@ def calc_readings():
     M = take_input("Gas molecular mass (kg/mol): ")
     k = take_input("Ratio of specific heats (cp/cv): ")
     Lstar = take_input("Characteristic chamber length (L*, in meters): ")
+    exit_pressure(ALT)
     calculate()
 
 def calc_text():
@@ -171,13 +172,13 @@ def exit_pressure(h):
     global P3
     if (h >= 25000):  # Upper Stratosphere
         T = -131.21 + 0.00299 * h
-        P3 = (2.488 * ((T + 273.1) / 216.6) ** (-11.388))/1000
+        P3 = (2.488 * ((T + 273.1) / 216.6) ** (-11.388))*1000
     elif (11000 < h < 25000):  # Lower Stratosphere
         T = -56.46
-        P3 = (22.65 * exp(1.73 - 0.000157 * h))/1000
+        P3 = (22.65 * exp(1.73 - 0.000157 * h))*1000
     else: # Troposphere
         T = 15.04 - 0.00649 * h
-        P3 = (101.29 * ((T + 273.1) / 288.08) ** (5.256))/1000
+        P3 = (101.29 * ((T + 273.1) / 288.08) ** (5.256))*1000
 
 def calculate():
     """

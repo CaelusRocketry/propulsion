@@ -21,13 +21,13 @@ n = input('Number of characteristics (>2) emanating from throat: ');
 %% Exit Pressure
 if (ALT >= 25000)  % Upper Stratosphere
     T = -131.21 + 0.00299 * ALT;
-    P3 = (2.488 * ((T + 273.1) / 216.6)^(-11.388))/1000;
+    P3 = (2.488 * ((T + 273.1) / 216.6)^(-11.388))*1000;
 elseif (11000 < ALT) && (ALT < 25000)  % Lower Stratosphere
     T = -56.46;
-    P3 = (22.65 * exp(1.73 - 0.000157 * ALT))/1000;
+    P3 = (22.65 * exp(1.73 - 0.000157 * ALT))*1000;
 else % Troposphere
     T = 15.04 - 0.00649 * ALT;
-    P3 = (101.29 * ((T + 273.1) / 288.08)^(5.256))/1000;
+    P3 = (101.29 * ((T + 273.1) / 288.08)^(5.256))*1000;
 end
 %% Isentropic Flow Relations
 PR = P3/P0; % Pressure ratio
@@ -44,17 +44,24 @@ Mnum2 = v2/a2; % Exit Mach number
 At = (mdot*(sqrt(k*R*T0))) / (k*P0*(sqrt(((2/(k+1)) ^ ((k+1)/(k-1)))))); % Throat area
 Rt = sqrt(At / pi)*1000; % Throat radius in mm
 %% Calculate Incident Expansion Waves
-theta_max = rad2deg((1/2)*PMfunct(Mnum2, k)); % Maximum wall angle
-theta_0 = theta_max/n; % First expansion fan is delta theta, i.e theta interval
+theta_max = rad2deg((1/2)*PMfunct(Mnum2, k)); % Maximum wall angle in degrees
+theta_0 = theta_max/n; % First flow deflection angle is delta theta, i.e. theta interval
+node = (1/2)*n*(4+n-1); % Computes total nodes (intersections) that need to be characterized
 
 [v,KL,KR,theta,Kangle] = solveK(theta_max,theta_0,n);
+points = zeros(node, 2);
+
+for i=1:n
+    points(i, 1:2) = [((-Rt)/Kangle(i)) Rt];
+end
 %% Plot Incident Expansion Waves
-x1 = 0;
-y1 = Rt;
 for i=1:n
     % Equation of the KR line from nozzle throat = Kangle(i)*x + Rt
+    disp(tand(theta(i)));
+    x = [0 (-Rt)/tand(theta(i))];
     y = [Rt 0];
-    x = [0, (-Rt)/Kangle(i)];
+    %x = [0 points(i,1)]; 
+    %y = [points(i,2) 0];
     plot(x,y,'color','blue')
     xlabel('CENTERLINE')
     ylabel('RADIUS (MM)')
@@ -70,14 +77,15 @@ hold off;
 % Kangle = Angle of characteristic relative to horizontal
 function [v,KL,KR,theta,Kangle] = solveK(theta_max,theta_0,n)
 
-dtheta = (theta_max - theta_0)/(n-1);
-theta = zeros(1,n);
-v = zeros(1,n);
-KL = zeros(1,n);
-KR = zeros(1,n);
-Kangle = zeros(1,n);
+dtheta = (theta_max - theta_0)/(n-1); % Theta interval
+node = (1/2)*n*(4+n-1);
+v = zeros(1,node);
+KL = zeros(1,node);
+KR = zeros(1,node);
+theta = zeros(1,node);
+Kangle = zeros(1,node);
 
-for i=1:n
+for i=1:n % Increments through all points emanating directly from the throat
     theta(i)=theta_0+(i-1)*dtheta;
     v(i)=theta(i);
     KL(i)=theta(i)-v(i);
@@ -88,10 +96,11 @@ end
 %% Prandtl-Meyer Function
 % Input is the local Mach number, dimensionless
 % Returns the Prandtl-Meyer angle, in radians
-function PMangle = PMfunct(gamma, mach)
+function v = PMfunct(mach, gamma)
 sect1 = (gamma+1)/(gamma-1);
-sect2 = (mach^2)-1;
-PMangle = sqrt(sect1)*atan(sqrt(sect1*sect2)) - atan(sqrt(sect2));
+sect2 = (gamma-1)/(gamma+1);
+sect3 = (mach^2)-1;
+v = sqrt(sect1)*atan(sqrt(sect2*sect3)) - atan(sqrt(sect3));
 end
 %% Inverse Prandtl-Meyer Function
 % Input is the Prandtl-Meyer angle, in radians
