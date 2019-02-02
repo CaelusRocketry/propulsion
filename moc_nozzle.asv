@@ -79,10 +79,7 @@ function [v,KL,KR,theta,Kangle] = solveK(theta_max,theta_0,n)
 
 initpt = Rt*tand(theta_0); % First centerline point, based on initial theta 
 finalpt = Rt*tand(theta_max*2); % Final centerline point is at twice the max angle
-dpoint = (finalpt - initpt)/(n-1); % Centerline point interval
-for i=1:n
-    points(i, 1:2) = [(initpt + dtpoint*(i-1)) 0]; % Adds all centerline (x,y) points
-end
+dpoint = (finalpt - initpt)/n; % Centerline point interval
 % dtheta = (theta_max - theta_0)/(n-1); % Theta interval
 node = (1/2)*n*(4+n-1);
 v = zeros(1,node);

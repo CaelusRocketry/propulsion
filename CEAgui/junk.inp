@@ -1,8 +1,9 @@
-problem   
+problem    o/f=1.0,1.5,2.0,
     rocket  frozen  nfz=1 
-  p,bar=20,
+  p,bar=10,
+  pi/p=18.519,
 react  
-  fuel=C3H8O,1propanol wt=91  t,k=298  
-  fuel=C3H8O,1propanol wt=9  t,k=298  
-  oxid=O2(L) wt=100  t,k=90.19  
+  fuel=C3H8O,2propanol wt=100  t,k=298  
+  fuel=H2O(L) wt=0  t,k=298  
+  oxid=O2 wt=100  t,k=298  
 end
