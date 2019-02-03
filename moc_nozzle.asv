@@ -52,14 +52,10 @@ points = zeros(pointnum, 2); % Pre-allocates a matrix of zeros for the (x,y) cri
 
 [v,KL,KR,theta,points] = solveK(theta_max,theta_0,n,Rt,points);
 
+% for i=1:n
+%     points(i, 1:2) = [((-Rt)/Kangle(i)) Rt];
+% end
 %% Plot Incident Expansion Waves
-initpt = Rt*tand(theta_0); % First centerline point, based on initial theta 
-finalpt = Rt*tand(theta_max*2); % Final centerline point is at twice the max angle
-dpoint = (finalpt - initpt)/(n-1); % Centerline point interval
-for i=1:n
-    points(i, 1:2) = [(initpt + dpoint*(i-1)) 0]; % Adds all centerline (x,y) points
-end
-figure(1) % Figure 1 is the plot of only the incident expansion waves
 for i=1:n
     % Equation of the KR line from nozzle throat = Kangle(i)*x + Rt
     x = points(i, 1:2);
@@ -76,9 +72,9 @@ hold off;
 % KL = Left-running characteristic constant
 % KR = Right-running characteristic constant
 % theta = Flow angle relative to horizontal
-function [v,KL,KR,theta,points] = solveK(theta_max,theta_0,n,points)
+function [v,KL,KR,theta,points] = solveK(theta_max,theta_0,n,Rt,points)
 
-dtheta = (theta_max - theta_0)/(n-1); % Theta interval
+% dtheta = (theta_max - theta_0)/(n-1); % Theta interval
 node = (1/2)*n*(4+n-1);
 v = zeros(1,node);
 KL = zeros(1,node);
