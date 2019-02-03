@@ -49,16 +49,15 @@ theta_0 = theta_max/n; % First flow deflection angle is delta theta, i.e. theta 
 node = (1/2)*n*(4+n-1); % Computes total nodes (intersections) that need to be characterized
 points = zeros(node, 2); % Pre-allocates a matrix of zeros for the (x,y) critical points
 
-[v,KL,KR,theta,Kangle] = solveK(theta_max,theta_0,n);
+[v,KL,KR,theta,points] = solveK(theta_max,theta_0,n,Rt,points);
 
-for i=1:n
-    points(i, 1:2) = [((-Rt)/Kangle(i)) Rt];
-end
+% for i=1:n
+%     points(i, 1:2) = [((-Rt)/Kangle(i)) Rt];
+% end
 %% Plot Incident Expansion Waves
 for i=1:n
     % Equation of the KR line from nozzle throat = Kangle(i)*x + Rt
-    disp(tand(theta(i)));
-    x = [0 (-Rt)/tand(theta(i))];
+    x = points(i, 1:2);
     y = [Rt 0];
     %x = [0 points(i,1)]; 
     %y = [points(i,2) 0];
@@ -75,13 +74,15 @@ hold off;
 % KR = Right-running characteristic constant
 % theta = Flow angle relative to horizontal
 % Kangle = Angle of characteristic relative to horizontal
-function [v,KL,KR,theta,Kangle] = solveK(theta_max,theta_0,n)
+function [v,KL,KR,theta,points] = solveK(theta_max,theta_0,n,Rt,points)
 
 initpt = Rt*tand(theta_0); % First centerline point, based on initial theta 
 finalpt = Rt*tand(theta_max*2); % Final centerline point is at twice the max angle
+disp(initpt);
+disp(finalpt);
 dpoint = (finalpt - initpt)/(n-1); % Centerline point interval
 for i=1:n
-    points(i, 1:2) = [(initpt + dtpoint*(i-1)) 0]; % Adds all centerline (x,y) points
+    points(i, 1:2) = [(initpt + dpoint*(i-1)) 0]; % Adds all centerline (x,y) points
 end
 % dtheta = (theta_max - theta_0)/(n-1); % Theta interval
 node = (1/2)*n*(4+n-1);
@@ -92,7 +93,7 @@ theta = zeros(1,node);
 % Kangle = zeros(1,node);
 
 for i=1:n % Increments through all points emanating directly from the throat
-    theta(i)=theta_0+(i-1)*dtheta;
+    theta(i)=atand((points(i,1))/Rt);
     v(i)=theta(i);
     KL(i)=theta(i)-v(i);
     KR(i)=theta(i)+v(i);
