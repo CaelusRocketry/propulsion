@@ -9,45 +9,36 @@
 % Speed Flows, Lecture 5'. References in any comments throughout this code
 % to equations or pages are based on the lecture's slideshow.
 
-% Outputs a text file of all (x,y) points that define the nozzle contour,
-% including the throat, named mocOutput.txt. Space delimited.
+% Outputs an Excel file of all (x,y) points that define the nozzle contour,
+% including the throat, named moc_data.xlsx. Also outputs a PDF file
+% displaying the nozzle contour.
 
-clc; close all; clear all;
+clc; close all; clear; tic;
 %% Inputs
-F = input('Desired thrust: ');
-P0 = input('Chamber pressure (Pa): ');
-ALT = input('Altitude (m): ');
-T0 = input('Combustion chamber temperature (K): ');
-M = input('Gas molecular mass (kg/mol): ');
-k = input('Ratio of specific heats (cp/cv): ');
-n = input('Number of characteristics (>2) emanating from throat: ');
-%% Exit Pressure
-if (ALT >= 25000)  % Upper Stratosphere
-    T = -131.21 + 0.00299 * ALT;
-    P3 = (2.488 * ((T + 273.1) / 216.6)^(-11.388))*1000;
-elseif (11000 < ALT) && (ALT < 25000)  % Lower Stratosphere
-    T = -56.46;
-    P3 = (22.65 * exp(1.73 - 0.000157 * ALT))*1000;
-else % Troposphere
-    T = 15.04 - 0.00649 * ALT;
-    P3 = (101.29 * ((T + 273.1) / 288.08)^(5.256))*1000;
+% Processes user inputs and defines calculation variables.
+fprintf('Input rocket parameters or specify Cp/Cv, Mach, and Rt? \n');
+option = input('Enter ROCKET or MACH: ', 's');
+if (strcmp(option,'ROCKET')) % If user inputs ROCKET
+    F = input('Desired thrust (N): ');
+    P0 = input('Chamber pressure (Pa): ');
+    ALT = input('Altitude (m): ');
+    T0 = input('Combustion chamber temperature (K): ');
+    M = input('Gas molecular mass (kg/mol): ');
+    gamma = input('Ratio of specific heats (Cp/Cv): ');
+    n = input('Number of characteristics (>2) emanating from throat: ');
+    P3 = exitPressure(ALT); % Calculate exit pressure
+    [Mnum2,Rt] = solveIsentropic(F,P0,P3,T0,M,gamma); % Solve isentropic parameters
+elseif (strcmp(option,'MACH')) % If user inputs MACH
+    Mnum2 = input('Exit Mach number: ');
+    gamma = input('Ratio of specific heats (Cp/Cv): ');
+    Rt = input('Throat radius (mm): ');
+    n = input('Number of characteristics (>2) emanating from throat: ');
+else
+    fprintf('Please enter either ROCKET or MACH. \n');
 end
-%% Isentropic Flow Relations
-PR = P3/P0; % Pressure ratio
-TR = PR^((k-1)/k); % Temperature ratio
-R = (8314.3/M); % Gas constant
-CTt = (2*k*R*T0)/(k-1); % Critical throat temperature (disputed equation?)
-CTp = ((2/(k+1))^(k/(k-1)))*P0; % Critical throat pressure
-CTv = sqrt((2*k*R*T0)/(k+1)); % Critical throat velocity
-v2 = sqrt((CTt)*(1-TR)); % Exit velocity
-mdot = F/v2; % Mass flow rate
-T2 = T0*TR; % Exit temperature
-a2 = sqrt(k*R*T2); % Exit speed of sound
-Mnum2 = v2/a2; % Exit Mach number
-At = (mdot*(sqrt(k*R*T0))) / (k*P0*(sqrt(((2/(k+1)) ^ ((k+1)/(k-1)))))); % Throat area
-Rt = sqrt(At / pi)*1000; % Throat radius in mm
-%% Calculate Incident Expansion Waves
-theta_max = (1/2)*PMfunct(Mnum2, k); % Maximum wall angle in degrees
+
+%% Calculate Expansion Waves
+theta_max = (1/2)*PMfunct(Mnum2, gamma); % Maximum wall angle in degrees
 theta_0 = theta_max/n; % First flow deflection angle is delta theta, i.e. theta interval
 node = (1/2)*n*(4+n-1); % Computes total nodes (intersections) that need to be characterized
 pointnum = n+1; % Number of points that will define the nozzle shape (including throat)
@@ -55,14 +46,10 @@ points = zeros(pointnum, 2); % Pre-allocates a matrix of zeros for the (x,y) exp
 points(1, 1:2) = [0 Rt]; % First coordinate
 
 [v,KL,KR,theta] = solveParams(theta_max,theta_0,n);
-[Mach,mu] = solveMachs(v);
-%% Plot Incident Expansion Waves
-
-% plot(x,y,'color','blue')
-% xlabel('CENTERLINE')
-% ylabel('RADIUS (MM)')
-% ylim([0 Rt*2])
+[Mach,mu] = solveMachs(v,n);
+%% Plot Expansion Waves
 i=1;
+count=2; % Index counter for the points matrix; starts at 2 since index 1 is already used
 x=zeros(1,node); % Pre-allocates an array for x-coordinates
 y=zeros(1,node); % Pre-allocates an array for y-coordinates
 wall=theta_max;
@@ -79,6 +66,8 @@ while (i<=n+1) % Iterates through the first expansion wave and its reflection
         x(i)=(y(i-1)-Rt-x(i-1)*tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5))/... % Slide 23
         (tand(0.5*(wall+theta(i)))-tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5));
         y(i)=Rt+x(i)*tand(0.5*(wall+theta(i))); % Slide 23
+        points(count, 1:2) = [x(i) y(i)]; % Adds the (x,y) wall coordinate to points
+        count=count+1; % Updates count
         plot([x(i-1) x(i)],[y(i-1) y(i)]);
         hold on
         plot([0 x(i)],[Rt y(i)]);
@@ -89,7 +78,7 @@ while (i<=n+1) % Iterates through the first expansion wave and its reflection
         y(i)=tand(theta(i)-mu(i))*x(i)+Rt;
         plot([x(i-1) x(i)],[y(i-1) y(i)]);
         hold on
-        plot([0 x(i)],[D y(i)]);
+        plot([0 x(i)],[Rt y(i)]);
         hold  on
     end
     i=i+1;
@@ -106,8 +95,12 @@ for j=1:n-1
             plot([x(i-n+k) x(i)],[y(i-n+k) y(i)]);
             hold on
         elseif (i==h+n-k-1)
-            x(i)=(x(i-n+k)*tand(0.5*(theta(i-n+k)+theta(i)))-y(i-n+k)+y(i-1)-x(i-1)*tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5))/(tand(0.5*(theta(i-n+k)+theta(i)))-tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5));
+            x(i)=(x(i-n+k)*tand(0.5*(theta(i-n+k)+theta(i)))-y(i-n+k)+y(i-1)-x(i-1)*...
+            tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5))/...
+            (tand(0.5*(theta(i-n+k)+theta(i)))-tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5));
             y(i)=y(i-n+k)+(x(i)-x(i-n+k))*tand(0.5*(theta(i-n+k)+theta(i)));
+            points(count, 1:2) = [x(i) y(i)]; % Adds the (x,y) wall coordinate to points
+            count=count+1; % Updates count
             plot([x(i-1) x(i)],[y(i-1) y(i)]);
             hold on
             plot([x(i-n+k) x(i)],[y(i-n+k) y(i)]);
@@ -128,6 +121,47 @@ for j=1:n-1
     h=i;
     i=h;
     hold on
+end
+title(sprintf('Characteristic Lines for Mach = %.4f and Cp/Cv = %.4f',Mnum2,gamma))
+xlabel('CENTERLINE')
+ylabel('RADIUS (MM)')
+axis equal
+xlim([0 x(node)+0])
+ylim([0 y(node)+0.5])
+%% Export
+% Exports Figure 1 (nozzle contour) as a PNG and points() as a text file.
+saveas(gcf, 'MOC_contour.pdf'); % Exports as PDF
+filename='moc_data.xlsx'; % Defines Excel file name
+xlswrite(filename, points); % Writes points() to the specified file
+toc % Prints time elapsed during code execution
+%% Exit Pressure
+function P3 = exitPressure(ALT)
+if (ALT >= 25000)  % Upper Stratosphere
+    T = -131.21 + 0.00299 * ALT;
+    P3 = (2.488 * ((T + 273.1) / 216.6)^(-11.388))*1000;
+elseif (11000 < ALT) && (ALT < 25000)  % Lower Stratosphere
+    T = -56.46;
+    P3 = (22.65 * exp(1.73 - 0.000157 * ALT))*1000;
+else % Troposphere
+    T = 15.04 - 0.00649 * ALT;
+    P3 = (101.29 * ((T + 273.1) / 288.08)^(5.256))*1000;
+end
+end
+%% Isentropic Flow Relations
+function [Mnum2,Rt] = solveIsentropic(F,P0,P3,T0,M,k)
+PR = P3/P0; % Pressure ratio
+TR = PR^((k-1)/k); % Temperature ratio
+R = (8314.3/M); % Gas constant
+CTt = (2*k*R*T0)/(k-1); % Critical throat temperature (disputed equation?)
+CTp = ((2/(k+1))^(k/(k-1)))*P0; % Critical throat pressure
+CTv = sqrt((2*k*R*T0)/(k+1)); % Critical throat velocity
+v2 = sqrt((CTt)*(1-TR)); % Exit velocity
+mdot = F/v2; % Mass flow rate
+T2 = T0*TR; % Exit temperature
+a2 = sqrt(k*R*T2); % Exit speed of sound
+Mnum2 = v2/a2; % Exit Mach number
+At = (mdot*(sqrt(k*R*T0))) / (k*P0*(sqrt(((2/(k+1)) ^ ((k+1)/(k-1)))))); % Throat area
+Rt = sqrt(At / pi)*1000; % Throat radius in mm
 end
 %% Characteristic Parameter Solver
 % v = Prandtl-Meyer angle
@@ -196,7 +230,7 @@ end
 %% Mach Parameter Solver
 % Input is the array of Prandtl-Meyer angles produced by solveParams()
 % Returns an array of local Mach numbers, Mach, and local Mach angles, mu
-function [Mach,mu] = solveMachs(v)
+function [Mach,mu] = solveMachs(v,n)
 node = (1/2)*n*(4+n-1);
 Mach = zeros(1,node); % Pre-allocates a matrix of zeros for local Mach numbers
 mu = zeros(1,node); % Pre-allocates a matrix of zeros for local Mach angles
