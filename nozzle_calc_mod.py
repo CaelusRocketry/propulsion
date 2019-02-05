@@ -151,10 +151,11 @@ def calc_text():
     """
     Defines user parameters from text file and calls a calculation.
     """
-    global F, P0, P3, OF, T0, M, k, Lstar
+    global F, P0, ALT, P3, OF, T0, M, k, Lstar
     F = outarray[0]
     P0 = outarray[1]
-    P3 = outarray[2]
+    ALT = outarray[2]
+    exit_pressure(ALT)
     OF = outarray[3]
     T0 = outarray[4]
     M = outarray[5]
