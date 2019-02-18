@@ -1,0 +1,592 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>moc_nozzle</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-02-06"><meta name="DC.source" content="moc_nozzle.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Inputs</a></li><li><a href="#3">Calculate Expansion Waves</a></li><li><a href="#4">Plot Expansion Waves</a></li><li><a href="#5">Export</a></li><li><a href="#6">Exit Pressure</a></li><li><a href="#7">Isentropic Flow Relations</a></li><li><a href="#8">Characteristic Parameter Solver</a></li><li><a href="#9">Mach Parameter Solver</a></li><li><a href="#10">Prandtl-Meyer Function</a></li><li><a href="#11">Inverse Prandtl-Meyer Function</a></li><li><a href="#12">Mach Line Angle Function</a></li></ul></div><pre class="codeinput"><span class="comment">% Method of Characteristics for Minimum Length Supersonic Nozzle</span>
+<span class="comment">% Created by Jason Chen, Project Caelus</span>
+<span class="comment">% Thomas Jefferson High School for Science and Technology</span>
+<span class="comment">% Developed on December 31st, 2018</span>
+
+<span class="comment">% This program generates a minimum-length supersonic diverging nozzle</span>
+<span class="comment">% contour using the Method of Characteristics. Equations and methods are</span>
+<span class="comment">% derived from the von Karman Institute's 'Aerothermodynamics of High</span>
+<span class="comment">% Speed Flows, Lecture 5'. References in any comments throughout this code</span>
+<span class="comment">% to equations or pages are based on the lecture's slideshow.</span>
+
+<span class="comment">% Outputs an Excel file of all (x,y) points that define the nozzle contour,</span>
+<span class="comment">% including the throat, named moc_data.xlsx. Also outputs a PDF file</span>
+<span class="comment">% displaying the nozzle contour.</span>
+
+clc; close <span class="string">all</span>; clear; tic;
+</pre><h2 id="2">Inputs</h2><p>Processes user inputs and defines calculation variables.</p><pre class="codeinput">fprintf(<span class="string">'Input rocket parameters or specify Cp/Cv, Mach, and Rt? \n'</span>);
+option = input(<span class="string">'Enter ROCKET or MACH: '</span>, <span class="string">'s'</span>);
+<span class="keyword">if</span> (strcmp(option,<span class="string">'ROCKET'</span>)) <span class="comment">% If user inputs ROCKET</span>
+    F = input(<span class="string">'Desired thrust (N): '</span>);
+    P0 = input(<span class="string">'Chamber pressure (Pa): '</span>);
+    ALT = input(<span class="string">'Altitude (m): '</span>);
+    T0 = input(<span class="string">'Combustion chamber temperature (K): '</span>);
+    M = input(<span class="string">'Gas molecular mass (kg/mol): '</span>);
+    gamma = input(<span class="string">'Ratio of specific heats (Cp/Cv): '</span>);
+    n = input(<span class="string">'Number of characteristics (&gt;2) emanating from throat: '</span>);
+    P3 = exitPressure(ALT); <span class="comment">% Calculate exit pressure</span>
+    [Mnum2,Rt] = solveIsentropic(F,P0,P3,T0,M,gamma); <span class="comment">% Solve isentropic parameters</span>
+<span class="keyword">elseif</span> (strcmp(option,<span class="string">'MACH'</span>)) <span class="comment">% If user inputs MACH</span>
+    Mnum2 = input(<span class="string">'Exit Mach number: '</span>);
+    gamma = input(<span class="string">'Ratio of specific heats (Cp/Cv): '</span>);
+    Rt = input(<span class="string">'Throat radius (mm): '</span>);
+    n = input(<span class="string">'Number of characteristics (&gt;2) emanating from throat: '</span>);
+<span class="keyword">else</span>
+    fprintf(<span class="string">'Please enter either ROCKET or MACH. \n'</span>);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Input rocket parameters or specify Cp/Cv, Mach, and Rt? 
+</pre><pre class="codeoutput error">Error using input
+Cannot call INPUT from EVALC.
+
+Error in moc_nozzle (line 20)
+option = input('Enter ROCKET or MACH: ', 's');
+</pre><h2 id="3">Calculate Expansion Waves</h2><pre class="codeinput">theta_max = (1/2)*PMfunct(Mnum2, gamma); <span class="comment">% Maximum wall angle in degrees</span>
+theta_0 = theta_max/n; <span class="comment">% First flow deflection angle is delta theta, i.e. theta interval</span>
+node = (1/2)*n*(4+n-1); <span class="comment">% Computes total nodes (intersections) that need to be characterized</span>
+pointnum = n+1; <span class="comment">% Number of points that will define the nozzle shape (including throat)</span>
+points = zeros(pointnum, 2); <span class="comment">% Pre-allocates a matrix of zeros for the (x,y) export points</span>
+points(1, 1:2) = [0 Rt]; <span class="comment">% First coordinate</span>
+
+[v,KL,KR,theta] = solveParams(theta_max,theta_0,n);
+[Mach,mu] = solveMachs(v,n);
+</pre><h2 id="4">Plot Expansion Waves</h2><pre class="codeinput">i=1;
+count=2; <span class="comment">% Index counter for the points matrix; starts at 2 since index 1 is already used</span>
+x=zeros(1,node); <span class="comment">% Pre-allocates an array for x-coordinates</span>
+y=zeros(1,node); <span class="comment">% Pre-allocates an array for y-coordinates</span>
+wall=theta_max;
+<span class="keyword">while</span> (i&lt;=n+1) <span class="comment">% Iterates through the first expansion wave and its reflection</span>
+    <span class="keyword">if</span> (i==1) <span class="comment">% Initial incident expansion wave from the throat</span>
+        x(i)=-Rt/(tand(theta(i)-mu(i))); <span class="comment">% Slope of (RR) characteristics, Slide 33</span>
+        y(i)=0;
+        plot([0 x(i)],[Rt 0]); <span class="comment">% Connecting and plotting the throat and Point 1 (Slide 38)</span>
+        hold <span class="string">on</span>
+    <span class="keyword">elseif</span> (i==n+1) <span class="comment">% Reflected wave intersection with the wall</span>
+        <span class="comment">% Intersection at the wall is defined as the intersection of a line</span>
+        <span class="comment">% with slope tan(theta_max) and the LR characteristic from the last</span>
+        <span class="comment">% last point on the reflected wave (Slide 38).</span>
+        x(i)=(y(i-1)-Rt-x(i-1)*tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5))/<span class="keyword">...</span><span class="comment"> % Slide 23</span>
+        (tand(0.5*(wall+theta(i)))-tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5));
+        y(i)=Rt+x(i)*tand(0.5*(wall+theta(i))); <span class="comment">% Slide 23</span>
+        points(count, 1:2) = [x(i) y(i)]; <span class="comment">% Adds the (x,y) wall coordinate to points</span>
+        count=count+1; <span class="comment">% Updates count</span>
+        plot([x(i-1) x(i)],[y(i-1) y(i)]);
+        hold <span class="string">on</span>
+        plot([0 x(i)],[Rt y(i)]);
+        hold <span class="string">on</span>
+    <span class="keyword">else</span> <span class="comment">% Reflected wave</span>
+        x(i)=(Rt-y(i-1)+x(i-1)*tand(0.5*(mu(i-1)+theta(i-1)+mu(i)+theta(i))))/<span class="keyword">...</span>
+        (tand(0.5*(mu(i-1)+theta(i-1)+mu(i)+theta(i)))-tand(theta(i)-mu(i)));
+        y(i)=tand(theta(i)-mu(i))*x(i)+Rt;
+        plot([x(i-1) x(i)],[y(i-1) y(i)]);
+        hold <span class="string">on</span>
+        plot([0 x(i)],[Rt y(i)]);
+        hold  <span class="string">on</span>
+    <span class="keyword">end</span>
+    i=i+1;
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+h=i;
+k=0;
+i=h;
+<span class="keyword">for</span> j=1:n-1
+    <span class="keyword">while</span> (i&lt;=h+n-k-1)
+        <span class="keyword">if</span> (i==h)
+            x(i)=x(i-n+k)-y(i-n+k)/(tand(0.5*(theta(i-n+k)+theta(i)-mu(i-n+k)-mu(i))));
+            y(i)=0;
+            plot([x(i-n+k) x(i)],[y(i-n+k) y(i)]);
+            hold <span class="string">on</span>
+        <span class="keyword">elseif</span> (i==h+n-k-1)
+            x(i)=(x(i-n+k)*tand(0.5*(theta(i-n+k)+theta(i)))-y(i-n+k)+y(i-1)-x(i-1)*<span class="keyword">...</span>
+            tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5))/<span class="keyword">...</span>
+            (tand(0.5*(theta(i-n+k)+theta(i)))-tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5));
+            y(i)=y(i-n+k)+(x(i)-x(i-n+k))*tand(0.5*(theta(i-n+k)+theta(i)));
+            points(count, 1:2) = [x(i) y(i)]; <span class="comment">% Adds the (x,y) wall coordinate to points</span>
+            count=count+1; <span class="comment">% Updates count</span>
+            plot([x(i-1) x(i)],[y(i-1) y(i)]);
+            hold <span class="string">on</span>
+            plot([x(i-n+k) x(i)],[y(i-n+k) y(i)]);
+            hold <span class="string">on</span>
+        <span class="keyword">else</span>
+            s1= tand(0.5*(theta(i)+theta(i-1)+mu(i)+mu(i-1)));
+            s2= tand(0.5*(theta(i)+theta(i-n+k)-mu(i)-mu(i-n+k)));
+            x(i)=(y(i-n+k)-y(i-1)+s1*x(i-1)-s2*x(i-n+k))/(s1-s2);
+            y(i)=y(i-1)+(x(i)-x(i-1))*s1;
+            plot([x(i-1) x(i)],[y(i-1) y(i)]);
+            hold <span class="string">on</span>
+            plot([x(i-n+k) x(i)],[y(i-n+k) y(i)]);
+            hold <span class="string">on</span>
+        <span class="keyword">end</span>
+        i=i+1;
+    <span class="keyword">end</span>
+    k=k+1;
+    h=i;
+    i=h;
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+title(sprintf(<span class="string">'Characteristic Lines for Mach = %.4f and Cp/Cv = %.4f'</span>,Mnum2,gamma))
+xlabel(<span class="string">'CENTERLINE'</span>)
+ylabel(<span class="string">'RADIUS (MM)'</span>)
+axis <span class="string">equal</span>
+xlim([0 x(node)+10])
+ylim([0 y(node)+10])
+</pre><h2 id="5">Export</h2><p>Exports Figure 1 (nozzle contour) as a PNG and points() as a text file.</p><pre class="codeinput">saveas(gcf, <span class="string">'MOC_contour.pdf'</span>); <span class="comment">% Exports as PDF</span>
+filename=<span class="string">'moc_data.xlsx'</span>; <span class="comment">% Defines Excel file name</span>
+xlswrite(filename, points); <span class="comment">% Writes points() to the specified file</span>
+toc <span class="comment">% Prints time elapsed during code execution</span>
+</pre><h2 id="6">Exit Pressure</h2><pre class="codeinput"><span class="keyword">function</span> P3 = exitPressure(ALT)
+<span class="keyword">if</span> (ALT &gt;= 25000)  <span class="comment">% Upper Stratosphere</span>
+    T = -131.21 + 0.00299 * ALT;
+    P3 = (2.488 * ((T + 273.1) / 216.6)^(-11.388))*1000;
+<span class="keyword">elseif</span> (11000 &lt; ALT) &amp;&amp; (ALT &lt; 25000)  <span class="comment">% Lower Stratosphere</span>
+    T = -56.46;
+    P3 = (22.65 * exp(1.73 - 0.000157 * ALT))*1000;
+<span class="keyword">else</span> <span class="comment">% Troposphere</span>
+    T = 15.04 - 0.00649 * ALT;
+    P3 = (101.29 * ((T + 273.1) / 288.08)^(5.256))*1000;
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2 id="7">Isentropic Flow Relations</h2><pre class="codeinput"><span class="keyword">function</span> [Mnum2,Rt] = solveIsentropic(F,P0,P3,T0,M,k)
+PR = P3/P0; <span class="comment">% Pressure ratio</span>
+TR = PR^((k-1)/k); <span class="comment">% Temperature ratio</span>
+R = (8314.3/M); <span class="comment">% Gas constant</span>
+CTt = (2*k*R*T0)/(k-1); <span class="comment">% Critical throat temperature (disputed equation?)</span>
+CTp = ((2/(k+1))^(k/(k-1)))*P0; <span class="comment">% Critical throat pressure</span>
+CTv = sqrt((2*k*R*T0)/(k+1)); <span class="comment">% Critical throat velocity</span>
+v2 = sqrt((CTt)*(1-TR)); <span class="comment">% Exit velocity</span>
+mdot = F/v2; <span class="comment">% Mass flow rate</span>
+T2 = T0*TR; <span class="comment">% Exit temperature</span>
+a2 = sqrt(k*R*T2); <span class="comment">% Exit speed of sound</span>
+Mnum2 = v2/a2; <span class="comment">% Exit Mach number</span>
+At = (mdot*(sqrt(k*R*T0))) / (k*P0*(sqrt(((2/(k+1)) ^ ((k+1)/(k-1)))))); <span class="comment">% Throat area</span>
+Rt = sqrt(At / pi)*1000; <span class="comment">% Throat radius in mm</span>
+<span class="keyword">end</span>
+</pre><h2 id="8">Characteristic Parameter Solver</h2><p>v = Prandtl-Meyer angle KL = Left-running characteristic constant KR = Right-running characteristic constant theta = Flow angle relative to horizontal</p><pre class="codeinput"><span class="keyword">function</span> [v,KL,KR,theta] = solveParams(theta_max,theta_0,n)
+
+dtheta = (theta_max - theta_0)/(n-1); <span class="comment">% Theta interval</span>
+node = (1/2)*n*(4+n-1);
+v = zeros(1,node); <span class="comment">% Pre-allocates a matrix of zeros for PM angles</span>
+KL = zeros(1,node);
+KR = zeros(1,node);
+theta = zeros(1,node);
+<span class="comment">% Test case used: solveParams(25.8276, 2.5828, 7)</span>
+<span class="keyword">for</span> i=1:n <span class="comment">% Increments through all points emanating directly from the throat</span>
+    theta(i)=theta_0+(i-1)*dtheta;
+    v(i)=theta(i);
+    KL(i)=theta(i)-v(i); <span class="comment">% Slide 20, s+ characteristic constant</span>
+    KR(i)=theta(i)+v(i); <span class="comment">% Slide 20, s- characteristic constant</span>
+<span class="keyword">end</span>
+i=n+1; <span class="comment">% i=8, referring to the test case of n=7</span>
+theta(i)=theta(i-1); <span class="comment">% Makes a copy of the last set of parameters which are indexed as i-1</span>
+v(i)=v(i-1);
+KL(i)=KL(i-1);
+KR(i)=KR(i-1);
+p=2;
+q=n+2; <span class="comment">% q=9</span>
+<span class="keyword">for</span> k=1:n-1
+    j=p; <span class="comment">% j=2 (on the first iteration of this for-loop)</span>
+    h=q; <span class="comment">% h=9, parameters with an index of 9 refers to Point 2 (on Slide 36)</span>
+    theta(h)=0; <span class="comment">% Flow angle is canceled out after it crosses an incident and then its reflected wave</span>
+    KR(h)=KR(j); <span class="comment">% The right-running (RR) characteristic of Point 2 (on Slide 36) is the same as the</span>
+    <span class="comment">% RR characteristic of Point 9 on the centerline</span>
+    v(h)=KR(j)-theta(h); <span class="comment">% Slide 20, RR characteristic constant equation rearranged</span>
+    KL(h)=theta(h)-v(h); <span class="comment">% Slide 20, LR characteristic constant equation</span>
+    j=j+1; <span class="comment">% j=3</span>
+    <span class="keyword">for</span> i=h+1:n-p+q <span class="comment">% Runs through all intersections between the current reflected wave and any</span>
+        <span class="comment">% incident waves it encounters, i=10, goes to i=14 (Points 3 through 7)</span>
+        KR(i)=KR(j); <span class="comment">% The RR characteristic of Point 3 (on Slide 36) is the same as the</span>
+        <span class="comment">% RR characteristic of Point 16 on the centerline</span>
+        KL(i)=KL(i-1); <span class="comment">% The LR characteristic of Point 3 is the same as the LR</span>
+        <span class="comment">% characteristic of Point 2, KL(10) = KL of Point 3</span>
+        theta(i)=0.5*(KL(i)+KR(i)); <span class="comment">% Slide 20, flow angle equation</span>
+        v(i)=0.5*(KR(i)-KL(i)); <span class="comment">% Slide 20, PM angle equation</span>
+        j=j+1; <span class="comment">% j is now pointing at the fourth element, j=4, goes to j=8 by the end of the loop</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> i==n-p+q <span class="comment">% Only true on the first pass of the main for-loop</span>
+        h=i+1; <span class="comment">% h=15</span>
+    <span class="keyword">else</span>
+        h=h+1;
+    <span class="keyword">end</span>
+    theta(h)=theta(h-1); <span class="comment">% Makes a copy of the last set of parameters which are indexed as h-1</span>
+    <span class="comment">% These parameters with index h refer to the point at the intersection</span>
+    <span class="comment">% with the wall (Point 8 on Slide 38) and have equivalent properties as</span>
+    <span class="comment">% the last point on the reflected wave before it (which is indexed as</span>
+    <span class="comment">% h-1, i.e. Point 7 on Slide 38).</span>
+    v(h)=v(h-1);
+    KL(h)=KL(h-1);
+    KR(h)=KR(h-1);
+    p=p+1; <span class="comment">% p=3, pointing at the next (third) centerline point (Point 16 on Slide 36)</span>
+    q=h+1; <span class="comment">% q=16, pointing at the next point of intersection between the second</span>
+    <span class="comment">% reflected wave and the third incident wave (Point 10 on Slide 41)</span>
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2 id="9">Mach Parameter Solver</h2><p>Input is the array of Prandtl-Meyer angles produced by solveParams() Returns an array of local Mach numbers, Mach, and local Mach angles, mu</p><pre class="codeinput"><span class="keyword">function</span> [Mach,mu] = solveMachs(v,n)
+node = (1/2)*n*(4+n-1);
+Mach = zeros(1,node); <span class="comment">% Pre-allocates a matrix of zeros for local Mach numbers</span>
+mu = zeros(1,node); <span class="comment">% Pre-allocates a matrix of zeros for local Mach angles</span>
+<span class="keyword">for</span> i=1:node
+    Mach(i)=invPMfunct(v(i)); <span class="comment">% Inverse Prandtl-Meyer function</span>
+    mu(i)=Mu(Mach(i)); <span class="comment">% Computes the local Mach angles, using Mu()</span>
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2 id="10">Prandtl-Meyer Function</h2><p>Input is the local Mach number, dimensionless Returns the Prandtl-Meyer angle, in degrees</p><pre class="codeinput"><span class="keyword">function</span> v = PMfunct(mach, gamma) <span class="comment">% Slide 20, Prandtl-Meyer function</span>
+sect1 = (gamma+1)/(gamma-1);
+sect2 = (gamma-1)/(gamma+1);
+sect3 = (mach^2)-1;
+v = rad2deg(sqrt(sect1)*atan(sqrt(sect2*sect3)) - atan(sqrt(sect3)));
+<span class="keyword">end</span>
+</pre><h2 id="11">Inverse Prandtl-Meyer Function</h2><p>Input is the Prandtl-Meyer angle, in degrees Returns the local Mach number, dimensionless</p><pre class="codeinput"><span class="keyword">function</span> mach = invPMfunct(v)
+A = 1.3604; <span class="comment">% Pre-formulated coefficients</span>
+B = 0.0962;
+C = -0.5127;
+D = -0.6722;
+E = -0.3278;
+v = deg2rad(v); <span class="comment">% Converts the inputed angle in degrees to radians</span>
+v_0 = (pi/2)*(sqrt(6)-1);
+y = (v/v_0)^(2/3);
+mach = (1 + A*y + B*(y^2) + C*(y^3))/(1 + D*y + E*(y^2));
+<span class="keyword">end</span>
+</pre><h2 id="12">Mach Line Angle Function</h2><p>Input is the local Mach number, dimensionless Returns the Mach line angle, in degrees</p><pre class="codeinput"><span class="keyword">function</span> mu=Mu(M)
+mu=asind(1/M); <span class="comment">% Slide 20, Mach angle</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% Method of Characteristics for Minimum Length Supersonic Nozzle
+% Created by Jason Chen, Project Caelus
+% Thomas Jefferson High School for Science and Technology
+% Developed on December 31st, 2018
+
+% This program generates a minimum-length supersonic diverging nozzle 
+% contour using the Method of Characteristics. Equations and methods are 
+% derived from the von Karman Institute's 'Aerothermodynamics of High 
+% Speed Flows, Lecture 5'. References in any comments throughout this code
+% to equations or pages are based on the lecture's slideshow.
+
+% Outputs an Excel file of all (x,y) points that define the nozzle contour,
+% including the throat, named moc_data.xlsx. Also outputs a PDF file
+% displaying the nozzle contour.
+
+clc; close all; clear; tic;
+%% Inputs
+% Processes user inputs and defines calculation variables.
+fprintf('Input rocket parameters or specify Cp/Cv, Mach, and Rt? \n');
+option = input('Enter ROCKET or MACH: ', 's');
+if (strcmp(option,'ROCKET')) % If user inputs ROCKET
+    F = input('Desired thrust (N): ');
+    P0 = input('Chamber pressure (Pa): ');
+    ALT = input('Altitude (m): ');
+    T0 = input('Combustion chamber temperature (K): ');
+    M = input('Gas molecular mass (kg/mol): ');
+    gamma = input('Ratio of specific heats (Cp/Cv): ');
+    n = input('Number of characteristics (>2) emanating from throat: ');
+    P3 = exitPressure(ALT); % Calculate exit pressure
+    [Mnum2,Rt] = solveIsentropic(F,P0,P3,T0,M,gamma); % Solve isentropic parameters
+elseif (strcmp(option,'MACH')) % If user inputs MACH
+    Mnum2 = input('Exit Mach number: ');
+    gamma = input('Ratio of specific heats (Cp/Cv): ');
+    Rt = input('Throat radius (mm): ');
+    n = input('Number of characteristics (>2) emanating from throat: ');
+else
+    fprintf('Please enter either ROCKET or MACH. \n');
+end
+
+%% Calculate Expansion Waves
+theta_max = (1/2)*PMfunct(Mnum2, gamma); % Maximum wall angle in degrees
+theta_0 = theta_max/n; % First flow deflection angle is delta theta, i.e. theta interval
+node = (1/2)*n*(4+n-1); % Computes total nodes (intersections) that need to be characterized
+pointnum = n+1; % Number of points that will define the nozzle shape (including throat)
+points = zeros(pointnum, 2); % Pre-allocates a matrix of zeros for the (x,y) export points
+points(1, 1:2) = [0 Rt]; % First coordinate
+
+[v,KL,KR,theta] = solveParams(theta_max,theta_0,n);
+[Mach,mu] = solveMachs(v,n);
+%% Plot Expansion Waves
+i=1;
+count=2; % Index counter for the points matrix; starts at 2 since index 1 is already used
+x=zeros(1,node); % Pre-allocates an array for x-coordinates
+y=zeros(1,node); % Pre-allocates an array for y-coordinates
+wall=theta_max;
+while (i<=n+1) % Iterates through the first expansion wave and its reflection
+    if (i==1) % Initial incident expansion wave from the throat
+        x(i)=-Rt/(tand(theta(i)-mu(i))); % Slope of (RR) characteristics, Slide 33
+        y(i)=0;
+        plot([0 x(i)],[Rt 0]); % Connecting and plotting the throat and Point 1 (Slide 38)
+        hold on 
+    elseif (i==n+1) % Reflected wave intersection with the wall
+        % Intersection at the wall is defined as the intersection of a line
+        % with slope tan(theta_max) and the LR characteristic from the last
+        % last point on the reflected wave (Slide 38).
+        x(i)=(y(i-1)-Rt-x(i-1)*tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5))/... % Slide 23
+        (tand(0.5*(wall+theta(i)))-tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5));
+        y(i)=Rt+x(i)*tand(0.5*(wall+theta(i))); % Slide 23
+        points(count, 1:2) = [x(i) y(i)]; % Adds the (x,y) wall coordinate to points
+        count=count+1; % Updates count
+        plot([x(i-1) x(i)],[y(i-1) y(i)]);
+        hold on
+        plot([0 x(i)],[Rt y(i)]);
+        hold on
+    else % Reflected wave
+        x(i)=(Rt-y(i-1)+x(i-1)*tand(0.5*(mu(i-1)+theta(i-1)+mu(i)+theta(i))))/...
+        (tand(0.5*(mu(i-1)+theta(i-1)+mu(i)+theta(i)))-tand(theta(i)-mu(i)));
+        y(i)=tand(theta(i)-mu(i))*x(i)+Rt;
+        plot([x(i-1) x(i)],[y(i-1) y(i)]);
+        hold on
+        plot([0 x(i)],[Rt y(i)]);
+        hold  on
+    end
+    i=i+1;
+    hold on
+end
+h=i;
+k=0;
+i=h;
+for j=1:n-1
+    while (i<=h+n-k-1)
+        if (i==h)
+            x(i)=x(i-n+k)-y(i-n+k)/(tand(0.5*(theta(i-n+k)+theta(i)-mu(i-n+k)-mu(i))));
+            y(i)=0;
+            plot([x(i-n+k) x(i)],[y(i-n+k) y(i)]);
+            hold on
+        elseif (i==h+n-k-1)
+            x(i)=(x(i-n+k)*tand(0.5*(theta(i-n+k)+theta(i)))-y(i-n+k)+y(i-1)-x(i-1)*...
+            tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5))/...
+            (tand(0.5*(theta(i-n+k)+theta(i)))-tand((theta(i-1)+theta(i)+mu(i-1)+mu(i))*0.5));
+            y(i)=y(i-n+k)+(x(i)-x(i-n+k))*tand(0.5*(theta(i-n+k)+theta(i)));
+            points(count, 1:2) = [x(i) y(i)]; % Adds the (x,y) wall coordinate to points
+            count=count+1; % Updates count
+            plot([x(i-1) x(i)],[y(i-1) y(i)]);
+            hold on
+            plot([x(i-n+k) x(i)],[y(i-n+k) y(i)]);
+            hold on
+        else
+            s1= tand(0.5*(theta(i)+theta(i-1)+mu(i)+mu(i-1)));
+            s2= tand(0.5*(theta(i)+theta(i-n+k)-mu(i)-mu(i-n+k)));
+            x(i)=(y(i-n+k)-y(i-1)+s1*x(i-1)-s2*x(i-n+k))/(s1-s2);
+            y(i)=y(i-1)+(x(i)-x(i-1))*s1;
+            plot([x(i-1) x(i)],[y(i-1) y(i)]);
+            hold on
+            plot([x(i-n+k) x(i)],[y(i-n+k) y(i)]);
+            hold on
+        end
+        i=i+1;
+    end
+    k=k+1;
+    h=i;
+    i=h;
+    hold on
+end
+title(sprintf('Characteristic Lines for Mach = %.4f and Cp/Cv = %.4f',Mnum2,gamma))
+xlabel('CENTERLINE')
+ylabel('RADIUS (MM)')
+axis equal
+xlim([0 x(node)+10])
+ylim([0 y(node)+10])
+%% Export
+% Exports Figure 1 (nozzle contour) as a PNG and points() as a text file.
+saveas(gcf, 'MOC_contour.pdf'); % Exports as PDF
+filename='moc_data.xlsx'; % Defines Excel file name
+xlswrite(filename, points); % Writes points() to the specified file
+toc % Prints time elapsed during code execution
+%% Exit Pressure
+function P3 = exitPressure(ALT)
+if (ALT >= 25000)  % Upper Stratosphere
+    T = -131.21 + 0.00299 * ALT;
+    P3 = (2.488 * ((T + 273.1) / 216.6)^(-11.388))*1000;
+elseif (11000 < ALT) && (ALT < 25000)  % Lower Stratosphere
+    T = -56.46;
+    P3 = (22.65 * exp(1.73 - 0.000157 * ALT))*1000;
+else % Troposphere
+    T = 15.04 - 0.00649 * ALT;
+    P3 = (101.29 * ((T + 273.1) / 288.08)^(5.256))*1000;
+end
+end
+%% Isentropic Flow Relations
+function [Mnum2,Rt] = solveIsentropic(F,P0,P3,T0,M,k)
+PR = P3/P0; % Pressure ratio
+TR = PR^((k-1)/k); % Temperature ratio
+R = (8314.3/M); % Gas constant
+CTt = (2*k*R*T0)/(k-1); % Critical throat temperature (disputed equation?)
+CTp = ((2/(k+1))^(k/(k-1)))*P0; % Critical throat pressure
+CTv = sqrt((2*k*R*T0)/(k+1)); % Critical throat velocity
+v2 = sqrt((CTt)*(1-TR)); % Exit velocity
+mdot = F/v2; % Mass flow rate
+T2 = T0*TR; % Exit temperature
+a2 = sqrt(k*R*T2); % Exit speed of sound
+Mnum2 = v2/a2; % Exit Mach number
+At = (mdot*(sqrt(k*R*T0))) / (k*P0*(sqrt(((2/(k+1)) ^ ((k+1)/(k-1)))))); % Throat area
+Rt = sqrt(At / pi)*1000; % Throat radius in mm
+end
+%% Characteristic Parameter Solver
+% v = Prandtl-Meyer angle
+% KL = Left-running characteristic constant
+% KR = Right-running characteristic constant
+% theta = Flow angle relative to horizontal
+function [v,KL,KR,theta] = solveParams(theta_max,theta_0,n)
+
+dtheta = (theta_max - theta_0)/(n-1); % Theta interval
+node = (1/2)*n*(4+n-1);
+v = zeros(1,node); % Pre-allocates a matrix of zeros for PM angles
+KL = zeros(1,node);
+KR = zeros(1,node);
+theta = zeros(1,node);
+% Test case used: solveParams(25.8276, 2.5828, 7)
+for i=1:n % Increments through all points emanating directly from the throat
+    theta(i)=theta_0+(i-1)*dtheta;
+    v(i)=theta(i);
+    KL(i)=theta(i)-v(i); % Slide 20, s+ characteristic constant
+    KR(i)=theta(i)+v(i); % Slide 20, s- characteristic constant
+end
+i=n+1; % i=8, referring to the test case of n=7
+theta(i)=theta(i-1); % Makes a copy of the last set of parameters which are indexed as i-1
+v(i)=v(i-1);
+KL(i)=KL(i-1);
+KR(i)=KR(i-1);
+p=2;
+q=n+2; % q=9
+for k=1:n-1
+    j=p; % j=2 (on the first iteration of this for-loop)
+    h=q; % h=9, parameters with an index of 9 refers to Point 2 (on Slide 36)
+    theta(h)=0; % Flow angle is canceled out after it crosses an incident and then its reflected wave
+    KR(h)=KR(j); % The right-running (RR) characteristic of Point 2 (on Slide 36) is the same as the 
+    % RR characteristic of Point 9 on the centerline
+    v(h)=KR(j)-theta(h); % Slide 20, RR characteristic constant equation rearranged
+    KL(h)=theta(h)-v(h); % Slide 20, LR characteristic constant equation
+    j=j+1; % j=3
+    for i=h+1:n-p+q % Runs through all intersections between the current reflected wave and any
+        % incident waves it encounters, i=10, goes to i=14 (Points 3 through 7)
+        KR(i)=KR(j); % The RR characteristic of Point 3 (on Slide 36) is the same as the 
+        % RR characteristic of Point 16 on the centerline
+        KL(i)=KL(i-1); % The LR characteristic of Point 3 is the same as the LR
+        % characteristic of Point 2, KL(10) = KL of Point 3
+        theta(i)=0.5*(KL(i)+KR(i)); % Slide 20, flow angle equation
+        v(i)=0.5*(KR(i)-KL(i)); % Slide 20, PM angle equation
+        j=j+1; % j is now pointing at the fourth element, j=4, goes to j=8 by the end of the loop
+    end
+    if i==n-p+q % Only true on the first pass of the main for-loop
+        h=i+1; % h=15
+    else
+        h=h+1;
+    end
+    theta(h)=theta(h-1); % Makes a copy of the last set of parameters which are indexed as h-1
+    % These parameters with index h refer to the point at the intersection
+    % with the wall (Point 8 on Slide 38) and have equivalent properties as
+    % the last point on the reflected wave before it (which is indexed as
+    % h-1, i.e. Point 7 on Slide 38).
+    v(h)=v(h-1);
+    KL(h)=KL(h-1);
+    KR(h)=KR(h-1);
+    p=p+1; % p=3, pointing at the next (third) centerline point (Point 16 on Slide 36) 
+    q=h+1; % q=16, pointing at the next point of intersection between the second
+    % reflected wave and the third incident wave (Point 10 on Slide 41)
+end
+end
+%% Mach Parameter Solver
+% Input is the array of Prandtl-Meyer angles produced by solveParams()
+% Returns an array of local Mach numbers, Mach, and local Mach angles, mu
+function [Mach,mu] = solveMachs(v,n)
+node = (1/2)*n*(4+n-1);
+Mach = zeros(1,node); % Pre-allocates a matrix of zeros for local Mach numbers
+mu = zeros(1,node); % Pre-allocates a matrix of zeros for local Mach angles
+for i=1:node
+    Mach(i)=invPMfunct(v(i)); % Inverse Prandtl-Meyer function
+    mu(i)=Mu(Mach(i)); % Computes the local Mach angles, using Mu()
+end
+end
+%% Prandtl-Meyer Function
+% Input is the local Mach number, dimensionless
+% Returns the Prandtl-Meyer angle, in degrees
+function v = PMfunct(mach, gamma) % Slide 20, Prandtl-Meyer function
+sect1 = (gamma+1)/(gamma-1);
+sect2 = (gamma-1)/(gamma+1);
+sect3 = (mach^2)-1;
+v = rad2deg(sqrt(sect1)*atan(sqrt(sect2*sect3)) - atan(sqrt(sect3)));
+end
+%% Inverse Prandtl-Meyer Function
+% Input is the Prandtl-Meyer angle, in degrees
+% Returns the local Mach number, dimensionless
+function mach = invPMfunct(v)
+A = 1.3604; % Pre-formulated coefficients
+B = 0.0962;
+C = -0.5127;
+D = -0.6722;
+E = -0.3278;
+v = deg2rad(v); % Converts the inputed angle in degrees to radians
+v_0 = (pi/2)*(sqrt(6)-1);
+y = (v/v_0)^(2/3);
+mach = (1 + A*y + B*(y^2) + C*(y^3))/(1 + D*y + E*(y^2));
+end
+%% Mach Line Angle Function
+% Input is the local Mach number, dimensionless
+% Returns the Mach line angle, in degrees
+function mu=Mu(M)
+mu=asind(1/M); % Slide 20, Mach angle
+end
+##### SOURCE END #####
+--></body></html>
