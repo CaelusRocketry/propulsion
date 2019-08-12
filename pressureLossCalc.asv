@@ -2,15 +2,16 @@
 clc; clear; close all;
 %% Main
 numPoints = 100;
-figure('Position', [150 200 1080 720]);
+figure('Position', [50 50 1080 720]);
 subplot(2,2,1);
 diameter = linspace(0.5, 1.5, numPoints); % inches
 roughness = 1.5e-06; % m
 deltaP = getPressureDrop(diameter, roughness, numPoints, 'diameter');
 plot(diameter, deltaP);
-% subtitle = sprintf('Assuming pipe roughness of %d in', roughness*39.37);
+subtitle = sprintf('Assuming pipe roughness of %d in', ...
+    roughness*39.37);
 title('Pipe Diameter vs Pressure Loss (Imperial)');
-xlabel('Pipe Diameter (in)');
+xlabel({'Pipe Diameter (in)', subtitle});
 ylabel('Pressure Drop (MPa)');
 
 subplot(2,2,2);
@@ -33,7 +34,7 @@ ylabel('Pressure Drop (MPa)');
 subplot(2,2,3);
 roughness = roughness.*(39.37); % x-axis now measured in inches
 plot(roughness, deltaP);
-% subtitle = sprintf('Assuming pipe diameter of %d in', diameter);
+subtitle = sprintf('Assuming pipe diameter of %d in', round(diameter, 3));
 title('Pipe Roughness vs Pressure Loss (Imperial)');
 xlabel('Average Roughness (in)');
 ylabel('Pressure Drop (MPa)');
