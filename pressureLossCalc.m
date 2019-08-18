@@ -2,7 +2,7 @@
 clc; clear; close all;
 %% Main
 numPoints = 100;
-figure('Position', [150 200 1080 720]);
+figure('Position', [50 50 1080 720]);
 subplot(2,2,1);
 diameter = linspace(0.5, 1.5, numPoints); % inches
 roughness = 1.5e-06; % m
