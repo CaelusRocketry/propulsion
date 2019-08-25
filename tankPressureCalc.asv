@@ -15,7 +15,7 @@ tankVolumes = [50 100 150 200]; % Liters
 totalVolumes = zeros(numPoints, size(tankVolumes,2));
 totalMasses = zeros(numPoints, size(tankVolumes,2));
 t1 = 298; % Initial temperature, Kelvin
-maxTemp = 373.15; % Boiling point of water
+maxTemp = 373.
 % pressureDrops = [tankVolumes; pressureDrops]; 
 for n=1:size(tankVolumes,2)
     tankVol = tankVolumes(n);
@@ -33,9 +33,8 @@ for n=1:size(tankVolumes,2)
         minTemp = min(t1, t2);
         maxTemp = max(t1, t2);
         totalVol = (massTank+massRes)/((p1/(R*maxTemp))-(p3/(R*minTemp)));
-        totalMass = (p1*totalVol*1.02)/(R*maxTemp); %  +2 percent reserve
-        totalVolTank = (R*maxTemp*totalMass)/(p1*1);
-        totalVolumes(i,n) = totalVolTank;
+        totalMass = p1*totalVol*1.02/(R*maxTemp); %  +2 percent reserve
+        totalVolumes(i,n) = totalVol;
         totalMasses(i,n) = totalMass;
     end
 end
