@@ -6,10 +6,9 @@ ValispacePull()
 %% Simple Tank Pressure Calculation
 % Using two isentropic expansion formulas
 % https://www.grc.nasa.gov/www/k-12/airplane/compexp.html
-finalPressure = ValispaceGetValue("Propellant_Tanks.FinalPressure"); % Final pressure inside tank
-% waterVolume = 4.567; % Liters
-waterVolume = (ValispaceGetValue("Fluid.Time") * (1/ValispaceGetValue("Fluid.Density")) * ValispaceGetValue("Fluid.MassFlowRate")) * 1000;
-disp(waterVolume)
+finalPressure = ValispaceGetVal("Tank.FinalPressure"); % Final pressure inside tank
+waterVolume = 4.567; % Liters
+waterVolume = ValispaceGetVal("Fluid.Time") * 
 initVolume = linspace(waterVolume, 100-waterVolume, numPoints);
 totalVolume = initVolume+waterVolume;
 initTemp = 298; % Kevlin, room temperature
