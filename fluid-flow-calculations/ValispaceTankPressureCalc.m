@@ -1,3 +1,7 @@
+%% Tank Pressure Loss Calculation with Valispace Integration
+% Valispace integration of tankPressureSimple.m
+% Ron Nachum, 05 October, 2019
+
 %% Preprocessing 
 clc; close all;
 ValispaceInit("https://caelus.valispace.com","RonNachum","Valispace2019")

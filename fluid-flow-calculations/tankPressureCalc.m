@@ -1,3 +1,8 @@
+%% Tank Pressurant Requirement Calculation
+% Calculates the required pressurant pressure given tank parameters
+% Currently inaccurate (failed sanity check)
+% Jason Chen, 05 October, 2019
+
 %% Preprocessing
 clc; clear; close all;
 %% Pressure vs Temperature, Isentropic Expansion

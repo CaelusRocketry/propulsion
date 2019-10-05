@@ -1,3 +1,7 @@
+%% Experimental Valve PID 
+% Experimental valve PID code for controlling the ball valve
+% Ron Nachum, 05 October, 2019
+
 InitialPressure = rand(4.1, 4.5,'double'); Pressure = InitialPressure;
 InitialDiameter = 0.5; Diameter = InitialDiameter;
 

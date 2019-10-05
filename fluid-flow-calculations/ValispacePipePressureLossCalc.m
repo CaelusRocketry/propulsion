@@ -1,3 +1,7 @@
+%% System Pressure Loss Calculation with Valispace Integration
+% Valispace integration of pipePressureLossCalc.m
+% Ron Nachum, 05 October, 2019
+
 % Valispace Login
 ValispaceInit("https://caelus.valispace.com","RonNachum","Valispace2019")
 

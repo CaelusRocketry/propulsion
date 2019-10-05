@@ -1,3 +1,8 @@
+%% System Piping Pressure Loss Calculation
+% Calculates pressure loss, Reynolds number, friction facts, head loss, and
+% pressure drops across the system given pipe and fluid attributes
+% Jason Chen, 05 October, 2019
+
 %% Preprocessing
 clc; clear; close all;
 %% Main

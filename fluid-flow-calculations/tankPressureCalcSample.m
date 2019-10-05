@@ -1,3 +1,7 @@
+%% Tank Pressure Sample Calculation
+% Testing calculations when trying to decipher Huzel & Huang
+% Gabriel Witkop & Sophia Troshynski, 05 October, 2019
+
 %% Preprocessing
 clc; clear; close all;
 %% Pressure vs Temperature, Isentropic Expansion
