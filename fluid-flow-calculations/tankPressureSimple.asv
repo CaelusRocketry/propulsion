@@ -46,14 +46,10 @@ xlabel('Total Tank Volume, L');
 ylabel('Initial Pressure, MPa');
 zlabel('Final Temperature, K');
 
-%% Inputted Tank Volume
-totalTankVolume = input("Total tank volume (L)? ");
+totalTankVolume = input("Total tank volume (L)?");
 initPressurantVolume = totalTankVolume - 4.567;
 finalPressure = 1.6e06;
 initPressure = getInitPressure(finalPressure, initPressurantVolume, totalTankVolume, gamma);
-finalTemp = getFinalTemp(initTemp, initPressurantVolume, totalTankVolume, gamma);
-disp("Initial Pressurant Pressure (MPa): " + initPressure/1e06);
-disp("Final Tank Temperature (K): " + finalTemp);
 %% Functions
 function finalTemp = getFinalTemp(temp_1, pressure_1, pressure_2, gamma)
     finalTemp = temp_1*(pressure_2/pressure_1)^((gamma-1)/gamma);

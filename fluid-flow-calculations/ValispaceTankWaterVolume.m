@@ -1,5 +1,7 @@
 %% Tank Water Volume Calculation
-% Calculates required water volume for a SCUBA tank (
+% Calculates required water volume for a SCUBA tank, given SCUBA parameters
+% Attempting to use Valispace integration
+% Ron Nachum, 05 October, 2019
 
 ValispaceInit("https://caelus.valispace.com","RonNachum","Valispace2019")
 ValispacePull()
