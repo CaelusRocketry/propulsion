@@ -9,7 +9,7 @@ for part in file.readlines():
    parts.append(float(part.rstrip('\n')))
 file.close()
 
-print(sum(parts))
+print("Total 80/20:", sum(parts), "inches")
 
 lengthToCount = dict()
 for length in range(minimumValue, maximumValue+2, 2):
@@ -18,6 +18,7 @@ for length in range(minimumValue, maximumValue+2, 2):
       count += int(part//length)
    lengthToCount[length] = count
 
-print(lengthToCount)
+for length in lengthToCount:
+   print("We can make ", lengthToCount[length], "   ", length, "-inch pieces", sep="")
 # print("Maximum:", max(lengthToCount.iteritems(), key=operator.itemgetter(1))[0])
 
