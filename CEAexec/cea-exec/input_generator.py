@@ -1,5 +1,5 @@
 # Generates an .inp file (for CEA2) given parameters in the __main__ method
-# Project Caelus, 12/14/2019
+# Jason Chen, Project Caelus, 12/14/2019
 
 import sys
 import math
@@ -28,12 +28,12 @@ def get_exit_pressure(h: int or float):
 
 
 if __name__ == "__main__":
-    of_ratios = np.arange(1.2, 1.4, 0.02)
-    chamber_pressures = np.arange(1.5, 2.5, 0.1)  # MPa
+    of_ratios = np.arange(1.2, 1.4+0.01, 0.04)
+    chamber_pressures = np.arange(1.5, 2.5+0.01, 0.1)  # MPa
     problem_type = "rocket"
     altitude = 5000  # Meters
     equilibrium = True  # Tends to underestimate engine performance
-    frozen = True  # Tends to overestimate engine performance
+    frozen = False  # Tends to overestimate engine performance
     if frozen:
         nfz = 1  # Freezing point is at the throat
     chamber_pressures = [float("{:.1f}".format(float(x))) for x in chamber_pressures]
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     with open(filename, "w+") as f:
         line_1 = "problem  case={} o/f={}\n".format(case_name, "".join([str(i) + "," for i in of_ratios]))
         f.write(line_1)
-        line_2 = "      "
+        line_2 = "      {}".format(problem_type)
         if equilibrium:
             line_2 += "  equilibrium"
         if frozen:
