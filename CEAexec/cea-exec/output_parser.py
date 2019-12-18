@@ -13,13 +13,16 @@ if __name__ == "__main__":
         with open(cea_filename, mode='r') as cea_f:
             cea_lines = cea_f.readlines()
             file_writer = csv.writer(csv_f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            unique_rows = set()
             row = ["O/F", "P0 (BAR)", "P1 (BAR)", "T0 (K)", "M (1/n)", "GAMMA", "CSTAR (M/SEC)", "ISP (M/SEC)"]
             dims = len(row)
             for i, line in enumerate(cea_lines):
                 if delimiter in line:  # Clear the row and append to a new one
-                    print(row)
                     assert len(row) == dims
-                    file_writer.writerow(row)
+                    if str(row) not in unique_rows:
+                        unique_rows.add(str(row))
+                        file_writer.writerow(row)
+                        print(row)
                     row = []
                     continue
                 line = line.strip()
