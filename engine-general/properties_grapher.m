@@ -31,7 +31,7 @@ ylabel("Theoretical C*(m/sec)");
 title({"{\bf\fontsize{14} Chamber Pressure v. C* (Equilibrium)}" ...
     '\fontsize{10} 75% C_{2}H_{5}OH + 25% H_{2}O/Gaseous O_{2} at 5km'}, ...
     'FontWeight', 'Normal');
-saveas(gcf, 'cp_cstar_mix.png'); % gcf = current figure
+% saveas(gcf, 'cp_cstar_mix.png'); % gcf = current figure
 
 %% Chamber Pressure v. Combustion Temperature v. Mixture Ratio
 figure;
@@ -58,7 +58,7 @@ ylabel("Combustion Temperature (K)");
 title({"{\bf\fontsize{14} Chamber Pressure v. Temperature (Equilibrium)}" ...
     '\fontsize{10} 75% C_{2}H_{5}OH + 25% H_{2}O/Gaseous O_{2} at 5km'}, ...
     'FontWeight', 'Normal');
-saveas(gcf, 'cp_temp_mix.png');
+% saveas(gcf, 'cp_temp_mix.png');
 
 %% Chamber Pressure v. Molar Weight v. Mixture Ratio
 figure;
@@ -85,7 +85,7 @@ ylabel("Exhaust Molecular Weight (kg/mol)");
 title({"{\bf\fontsize{14} Chamber Pressure v. Molar Weight (Equilibrium)}" ...
     '\fontsize{10} 75% C_{2}H_{5}OH + 25% H_{2}O/Gaseous O_{2} at 5km'}, ...
     'FontWeight', 'Normal');
-saveas(gcf, 'cp_molar_mix.png');
+% saveas(gcf, 'cp_molar_mix.png');
 
 %% Chamber Pressure v. Specific Heat Ratio v. Mixture Ratio
 figure;
@@ -112,7 +112,7 @@ ylabel("Ratio of Specific Heats");
 title({"{\bf\fontsize{14} Chamber Pressure v. Specific Heat Ratio (Equilibrium)}" ...
     '\fontsize{10} 75% C_{2}H_{5}OH + 25% H_{2}O/Gaseous O_{2} at 5km'}, ...
     'FontWeight', 'Normal');
-saveas(gcf, 'cp_gamma_mix.png');
+% saveas(gcf, 'cp_gamma_mix.png');
 
 %% Functions
 function [dims, num_mr] = getNumMixtureRatios(data)
