@@ -1,5 +1,5 @@
-Desired thrust (N): 2000
-Chamber pressure (Pa): 1000000
+Desired thrust (N): 5000
+Chamber pressure (Pa): 2000000
 Altitude (m): 5000
 Oxidizer to fuel ratio: 1.0
 Combustion chamber temperature (K): 2253.52

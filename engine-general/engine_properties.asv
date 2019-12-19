@@ -16,5 +16,7 @@ isp = v/g;
 burn_time = 8.1; % sec
 glow = 120*lbsm2kg;
 dry_weight = glow - burn_time*mdot;
-t = table(thrust, v, isp, dry_weight);
+name_vec = ["Thrust (N)", "Exhaust V (m/s)", "Isp (s)", "Dry Weight (kg)"];
+data_vec = [thrust, v, isp, dry_weight];
+t = table(data_vec, data_vec);
 disp(t);
