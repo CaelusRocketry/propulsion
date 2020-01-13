@@ -1,8 +1,8 @@
 Desired thrust (N): 5000
 Chamber pressure (Pa): 2000000
 Altitude (m): 5000
-Oxidizer to fuel ratio: 1.0
-Combustion chamber temperature (K): 2253.52
-Gas molecular mass (kg/mol): 17.156
-Ratio of specific heats (cp/cv): 1.2579
+Oxidizer to fuel ratio: 1.28
+Combustion chamber temperature (K): 3087.39
+Gas molecular mass (kg/mol): 22.95
+Ratio of specific heats (cp/cv): 1.1254
 Characteristic chamber length (L*, in meters): 0.75
