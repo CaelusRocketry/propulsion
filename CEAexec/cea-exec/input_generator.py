@@ -28,8 +28,8 @@ def get_exit_pressure(h: int or float):
 
 
 if __name__ == "__main__":
-    of_ratios = np.arange(1.2, 1.4+0.01, 0.04)
-    chamber_pressures = np.arange(1.0, 3.0+0.01, 0.1)  # MPa
+    of_ratios = np.arange(1.0)
+    chamber_pressures = np.arange(2)  # MPa
     problem_type = "rocket"
     altitude = 5000  # Meters
     equilibrium = True  # Tends to underestimate engine performance
