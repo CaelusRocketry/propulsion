@@ -50,8 +50,7 @@ for P=1:length(chamberPressure)
     preVenturiPressure = cavitatingVenturiPercent .* preCheckValvePressure; % Calculate needed inlet venturi pressure
     ballValvePressureDrop = pressDrop(specificGravity, 0.75, ballValveCV);  % Calculate ball valve pressure drop
     preBallValvePressure = preVenturiPressure + ballValvePressureDrop;      % Add pressure drop across ball valve
-    disp("Chamber Pressure: " + endPressure + " psi (" + chPress + " mpa)    |   Minimum Tank Pressure: " + preBallValvePressure + " psi (" + preBallValvePressure / 145.037737797 + "mpa)|");
-    minTankPressure(P) = preBallValvePressure;
+    minTankPressure(P) = preBallValvePressure / 145.037737797;
 end
 
 %% Initial Tank Pressure (Isentropic Expansion) Visualization
@@ -66,7 +65,7 @@ for P = 1:length(chamberPressure)
     for W = 1:length(percentWater)
         x2(i) = chamberPressure(P);
         y2(i) = (percentWater(W) * tankVolume) / massFlowRate;
-        initialPressure(i) = minTankPressure(P) / (((1 - percentWater(W))^1.4)*(145.037737797));
+        initialPressure(i) = minTankPressure(P) / ((1 - percentWater(W))^1.4);
         i = i + 1;
     end
 end
@@ -82,6 +81,15 @@ for i = 1:length(chamberPressure)
     plot3(x2(start:finish), y2(start:finish), initialPressure(start:finish));
     hold on;
 end
+
+formatSpec = "Chamber Pressure: %.2f mPa\t Minimum Tank Pressure: %.2f mPa\t Initial Tank Pressure: %.2f mPa\n";
+disp("Initial Parameters:");
+disp("Burn Time: 6 sec, Mass Flow Rate: 0.75 L/sec, Pipe Diameter: 0.5 in, Fluid Velocity: 19.424 ft/sec");
+fprintf("\n");
+for i = 1:length(chamberPressure)
+    fprintf(formatSpec, chamberPressure(i), minTankPressure(i), initialPressure((i-1)*length(percentWater) + 3));
+end
+
 %% Functions
 function fluidVelocity = velocity(pipeDiameter, volumetricFlowRate)
     fluidVelocity = (0.408 * volumetricFlowRate)/(pipeDiameter^2);
