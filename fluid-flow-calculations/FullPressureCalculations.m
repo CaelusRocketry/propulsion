@@ -13,17 +13,20 @@ checkCV = 1.2;                      % Range: 1-3        1/2": 1.2, 3/4": 1.5
 ballValveCV = 20;                   % Range: 10-25
 cavitatingVenturiPercent = 1.3;     % Range: 1.15-1.30  (15-30%)
 chamberPressure = 2;                % mPa               
-burnTime = 7.5;                     % sec
+burnTime = 6;                       % sec
 ratioOfSpecificHeats = 1.4;         % cp/cv             Property of Pressurant (N2)
 
 %% Calculations
-fluidVelocity = (0.408 * volumetricFlowRate)/(pipeDiameter^2);
-checkValvePressureDrop = pressDrop(specificGravity, 0.75, checkCV);     % Calculate check valve pressure drop
-preCheckValvePressure = chamberPressure + checkValvePressureDrop;       % Add pressure drop across check valve
-preVenturiPressure = cavitatingVenturiPercent .* preCheckValvePressure; % Calculate needed inlet venturi pressure
-ballValvePressureDrop = pressDrop(specificGravity, 0.75, ballValveCV);  % Calculate ball valve pressure drop
-preBallValvePressure = preVenturiPressure + ballValvePressureDrop;      % Add pressure drop across ball valve
+fluidVelocity = 15.850372483753 * (0.408 * volumetricFlowRate)/(pipeDiameter^2);
+chamberPressure = chamberPressure * 145.037737797;
+checkValvePressureDrop = pressDrop(specificGravity, volumetricFlowRate, checkCV);       % Calculate check valve pressure drop
+preCheckValvePressure = chamberPressure + checkValvePressureDrop;                       % Add pressure drop across check valve
+preVenturiPressure = cavitatingVenturiPercent .* preCheckValvePressure;                 % Calculate needed inlet venturi pressure
+ballValvePressureDrop = pressDrop(specificGravity, volumetricFlowRate, ballValveCV);    % Calculate ball valve pressure drop
+preBallValvePressure = preVenturiPressure + ballValvePressureDrop;                      % Add pressure drop across ball valve
 finalTankPressure = preBallValvePressure;
+chamberPressure = chamberPressure / 145.037737797;
+finalTankPressure = finalTankPressure / 145.037737797;
 
 volumeNitrogen = tankVolume - (burnTime * massFlowRate);
 proportionNitrogen = volumeNitrogen/tankVolume;
@@ -40,5 +43,5 @@ fprintf(formatSpecPressurantInputs, pressurant, specificGravity, ratioOfSpecific
 fprintf(formatSpecOutputs, fluidVelocity, finalTankPressure, initialTankPressure);
 %% Functions
 function pressureDrop = pressDrop(specificGravity, volumetricFlowRate, flowCoefficient)
-    pressureDrop = specificGravity * (volumetricFlowRate / flowCoefficient)^2;
+    pressureDrop =  specificGravity * (volumetricFlowRate / flowCoefficient)^2;
 end

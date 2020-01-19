@@ -17,7 +17,7 @@ burnTime = 7.5;                     % sec
 ratioOfSpecificHeats = 1.4;         % cp/cv             Property of Pressurant (N2)
 
 %% Calculations
-fluidVelocity = (0.408 * volumetricFlowRate)/(pipeDiameter^2);
+fluidVelocity =  15.850372483753(0.408 * volumetricFlowRate)/(pipeDiameter^2);
 checkValvePressureDrop = pressDrop(specificGravity, 0.75, checkCV);     % Calculate check valve pressure drop
 preCheckValvePressure = chamberPressure + checkValvePressureDrop;       % Add pressure drop across check valve
 preVenturiPressure = cavitatingVenturiPercent .* preCheckValvePressure; % Calculate needed inlet venturi pressure
@@ -32,13 +32,13 @@ initialTankPressure = finalTankPressure/((proportionNitrogen)^1.4);
 
 %% Output Display
 formatSpecInputs = "INPUTS\n-----\nChamber Pressure: %.2f mPa\nPipe Diameter: %.2f in\nVolumetric Flow Rate %.2f L/sec\nTank Volume %.2f L (%.2f L + Extra Pipe Space)\nSolenoid Valve Flow Coefficient %.2f\nCheck Valve Flow Coefficient %.2f\nBall Valve Flow Coefficient %.2f\nCavitating Venturi Pressure Needs: %.2f\n\n";
-formatSpecPressurantInputs = "PRESSURANT INPUTS\n-----------------\nName: %s\nSpecific Gravity: %.2f\nRatio of Specific Heats: %.2f";
-formatSpecOutputs = "OUTPUTS\n-------\nFluid Velocity: %.2f ft/sec\n";
+formatSpecPressurantInputs = "PRESSURANT INPUTS\n-----------------\nName: %s\nSpecific Gravity: %.2f\nRatio of Specific Heats: %.2f\n\n";
+formatSpecOutputs = "OUTPUTS\n-------\nFluid Velocity: %.2f ft/sec\nMinimum (Final) Tank Pressure: %.2f mPa\nInitial Tank Pressure: %.2f mPa\n";
 
 fprintf(formatSpecInputs, chamberPressure, pipeDiameter, volumetricFlowRate, tankVolume, actualTankVolume, solenoidCV, checkCV, ballValveCV, cavitatingVenturiPercent);
 fprintf(formatSpecPressurantInputs, pressurant, specificGravity, ratioOfSpecificHeats);
-
+fprintf(formatSpecOutputs, fluidVelocity, finalTankPressure, initialTankPressure);
 %% Functions
 function pressureDrop = pressDrop(specificGravity, volumetricFlowRate, flowCoefficient)
-    pressureDrop = specificGravity * (volumetricFlowRate / flowCoefficient)^2;
+    pressureDrop =  15.850372483753 * specificGravity * (volumetricFlowRate / flowCoefficient)^2;
 end
