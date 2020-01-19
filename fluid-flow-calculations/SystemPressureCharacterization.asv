@@ -31,6 +31,7 @@ for i = 1:length(pipeDiameter)
     plot3(x(start:finish), y(start:finish), fluidVelocity(start:finish));
     hold on;
 end
+hold off;
 
 %% Pressure Calculation Parameters
 solenoidCV = 2.8;               % Range: 2-4 1/2": 2.8, 3/4": 2.8
@@ -54,14 +55,32 @@ for P=1:length(chamberPressure)
 end
 
 %% Initial Tank Pressure (Isentropic Expansion) Visualization
-percentWater = linSpace(0.3, 0.95, 14);
+massFlowRate = 0.75;    % L/sec
+tankVolume = 11.2;      % L
+percentWater = linspace(0.3, 0.75, 10);
 initialPressure = zeros(1, length(percentWater) .* length(chamberPressure));
-x = zeros(1, length(percentWater) .* length(chamberPressure));
-
+x2 = zeros(1, length(percentWater) .* length(chamberPressure));
+y2 = zeros(1, length(percentWater) .* length(chamberPressure));
+i = 1;
 for P = 1:length(chamberPressure)
     for W = 1:length(percentWater)
-        
+        x2(i) = chamberPressure(P);
+        y2(i) = (percentWater(W) * tankVolume) / massFlowRate;
+        initialPressure(i) = minTankPressure(P) / (((1 - percentWater(W))^1.4)*(145.037737797));
+        i = i + 1;
     end
+end
+scatter3(x2, y2, initialPressure);
+xlabel('Chamber Pressure (mPa)');
+% ylabel('Burn time (sec) with Mass Flow Rate ' + massFlowRate + "L/sec");
+% zlabel('Initial Tank Pressure (mPa)');
+title('Inital Tank Pressure as a Function of Chamber Pressure and % Water');
+hold on;
+for i = 1:length(chamberPressure)
+    start = (i-1)*length(percentWater) + 1;
+    finish = start + length(percentWater) - 1;
+    plot3(x2(start:finish), y2(start:finish), initialPressure(start:finish));
+    hold on;
 end
 %% Functions
 function fluidVelocity = velocity(pipeDiameter, volumetricFlowRate)
