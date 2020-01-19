@@ -48,7 +48,7 @@ for P=1:length(chamberPressure)
     preVenturiPressure = cavitatingVenturiPercent .* preCheckValvePressure; % Calculate needed inlet venturi pressure
     ballValvePressureDrop = pressDrop(specificGravity, 0.75, ballValveCV);  % Calculate ball valve pressure drop
     preBallValvePressure = preVenturiPressure + ballValvePressureDrop;      % Add pressure drop across ball valve
-    disp("| " + chPress + " mpa Chamber    |   " + preBallValvePressure + " psi Tank   |   " + endPressure + " psi Chamber |");
+    disp(endPressure + " psi (" + chPress + " mpa) Chamber    |   " + preBallValvePressure + " psi (" + preBallValvePressure * 145.037737797 + "mpa) Tank   |");
 end
 
 %% Functions
