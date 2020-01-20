@@ -17,7 +17,7 @@ def type_with_delay(dir_name: str, delay: int or float):
 
 if __name__ == "__main__":
     print("Please enter the path to (and inluding) the .inp file. Current directory: {}".format(os.getcwd()))
-    dir_name = input("Example: \"ethanol-75-gox/ethanol-75-gox.inp\": ")
+    dir_name = input("Example: \"ethanol-75-lox/ethanol-75-lox.inp\": ")
     while os.path.exists(dir_name) == False:
         if dir_name == "0":
             sys.exit(0)

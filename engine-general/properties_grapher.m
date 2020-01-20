@@ -3,7 +3,7 @@
 % Jason Chen, Project Caelus, 16 December, 2019
 
 clc; close all;
-data = readtable('ethanol-75-gox.csv');
+data = readtable('ethanol-75-lox.csv');
 [dims, num_mr] = getNumMixtureRatios(data);
 
 %% Chamber Pressure v. C* v. Mixture Ratio
