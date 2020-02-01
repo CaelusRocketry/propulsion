@@ -13,7 +13,7 @@ checkCV = 1.2;                      % Range: 1-3        1/2": 1.2, 3/4": 1.5
 ballValveCV = 20;                   % Range: 10-25
 cavitatingVenturiPercent = 1.3;     % Range: 1.15-1.30  (15-30%)
 chamberPressure = 2;                % mPa               
-burnTime = 6;                       % sec
+burnTime = 8;                       % sec
 ratioOfSpecificHeats = 1.4;         % cp/cv             Property of Pressurant (N2)
 
 %% Calculations
@@ -34,11 +34,11 @@ initialTankPressure = finalTankPressure/((proportionNitrogen)^1.4);
 
 
 %% Output Display
-formatSpecInputs = "INPUTS\n-----\nChamber Pressure: %.2f mPa\nPipe Diameter: %.2f in\nVolumetric Flow Rate %.2f L/sec\nTank Volume %.2f L (%.2f L + Extra Pipe Space)\nSolenoid Valve Flow Coefficient %.2f\nCheck Valve Flow Coefficient %.2f\nBall Valve Flow Coefficient %.2f\nCavitating Venturi Pressure Needs: %.2f\n\n";
+formatSpecInputs = "INPUTS\n-----\nChamber Pressure: %.2f mPa\nBurn Time: %.2f sec\nPipe Diameter: %.2f in\nVolumetric Flow Rate %.2f L/sec\nTank Volume %.2f L (%.2f L + Extra Pipe Space)\nSolenoid Valve Flow Coefficient %.2f\nCheck Valve Flow Coefficient %.2f\nBall Valve Flow Coefficient %.2f\nCavitating Venturi Pressure Needs: %.2f\n\n";
 formatSpecPressurantInputs = "PRESSURANT INPUTS\n-----------------\nName: %s\nSpecific Gravity: %.2f\nRatio of Specific Heats: %.2f\n\n";
 formatSpecOutputs = "OUTPUTS\n-------\nFluid Velocity: %.2f ft/sec\nMinimum (Final) Tank Pressure: %.2f mPa\nInitial Tank Pressure: %.2f mPa\n";
 
-fprintf(formatSpecInputs, chamberPressure, pipeDiameter, volumetricFlowRate, tankVolume, actualTankVolume, solenoidCV, checkCV, ballValveCV, cavitatingVenturiPercent);
+fprintf(formatSpecInputs, chamberPressure, burnTime, pipeDiameter, volumetricFlowRate, tankVolume, actualTankVolume, solenoidCV, checkCV, ballValveCV, cavitatingVenturiPercent);
 fprintf(formatSpecPressurantInputs, pressurant, specificGravity, ratioOfSpecificHeats);
 fprintf(formatSpecOutputs, fluidVelocity, finalTankPressure, initialTankPressure);
 %% Functions
