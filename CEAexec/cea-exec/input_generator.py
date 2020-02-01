@@ -28,10 +28,10 @@ def get_exit_pressure(h: int or float):
 
 
 if __name__ == "__main__":
-    of_ratios = np.arange(1.2, 1.61, 0.05)
-    chamber_pressures = np.arange(1, 3.1, 0.2)  # MPa
+    of_ratios = np.arange(3.9, 4.21, 0.05)
+    chamber_pressures = np.arange(1.2, 2.2, 0.1)  # MPa
     problem_type = "rocket"
-    altitude = 5000  # Meters
+    altitude = 500  # Meters
     equilibrium = True  # Tends to underestimate engine performance
     frozen = False  # Tends to overestimate engine performance
     if frozen:
@@ -45,12 +45,12 @@ if __name__ == "__main__":
     lox_temp = 90.17
     # Change the directory
     try:
-        os.chdir(os.getcwd() + "/ethanol-75-lox")
+        os.chdir(os.getcwd() + "/ethanol-95-n2o")
     except FileNotFoundError or OSError:
         print("Input file directory not found.")
         sys.exit(0)
     # Make the file
-    case_name = "ethanol-75-lox"
+    case_name = "ethanol-95-n2o"
     filename = case_name + ".inp"
     with open(filename, "w+") as f:
         line_1 = "problem  case={} o/f={}\n".format(case_name, "".join([str(i) + "," for i in of_ratios]))
@@ -68,11 +68,12 @@ if __name__ == "__main__":
         f.write(line_4)
         line_7 = "react\n"
         f.write(line_7)
-        line_8 = "  fuel=C2H5OH(L) wt=75  t,k={}\n".format(temperature)
+        line_8 = "  fuel=C2H5OH(L) wt=95  t,k={}\n".format(temperature)
         f.write(line_8)
-        line_9 = "  fuel=H2O(L) wt=25  t,k={}\n".format(temperature)
+        line_9 = "  fuel=H2O(L) wt=5  t,k={}\n".format(temperature)
         f.write(line_9)
-        line_10 = "  oxid=O2(L) wt=100  t,k={}\n".format(lox_temp)
+        line_10 = "  oxid=N2O wt=100  t,k={}\n".format(temperature)
+        # line_10 = "  oxid=O2(L) wt=100  t,k={}\n".format(lox_temp)
         f.write(line_10)
         line_11 = "end"
         f.write(line_11)

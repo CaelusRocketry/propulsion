@@ -6,8 +6,8 @@ import os
 import csv
 
 if __name__ == "__main__":
-    csv_filename = "ethanol-75-lox/ethanol-75-lox.csv"
-    cea_filename = "ethanol-75-lox/ethanol-75-lox.out"
+    csv_filename = "ethanol-95-n2o/ethanol-95-n2o.csv"
+    cea_filename = "ethanol-95-n2o/ethanol-95-n2o.out"
     delimiter = "THEORETICAL ROCKET PERFORMANCE ASSUMING EQUILIBRIUM"
     with open(csv_filename, mode='w', newline="") as csv_f:
         with open(cea_filename, mode='r') as cea_f:

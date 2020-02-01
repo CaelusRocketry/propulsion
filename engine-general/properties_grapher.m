@@ -3,7 +3,7 @@
 % Jason Chen, Project Caelus, 16 December, 2019
 
 clc; close all;
-data = readtable('ethanol-75-lox.csv');
+data = readtable('ethanol-95-n2o.csv');
 [dims, num_mr] = getNumMixtureRatios(data);
 
 %% Chamber Pressure v. C* v. Mixture Ratio
@@ -31,9 +31,9 @@ grid on;
 xlabel("Chamber Pressure (Bar)");
 ylabel("Theoretical C* (m/sec)");
 title({"{\bf\fontsize{14} Chamber Pressure v. C* (Equilibrium)}" ...
-    '\fontsize{10} 75% C_{2}H_{5}OH + 25% H_{2}O/Gaseous O_{2} at 5km'}, ...
+    '\fontsize{10} 95% C_{2}H_{5}OH + 5% H_{2}O/N_{2}O at 500m'}, ...
     'FontWeight', 'Normal');
-saveas(gcf, 'cp_cstar_mix.fig'); % gcf = current figure
+% saveas(gcf, 'cp_cstar_mix.fig'); % gcf = current figure
 
 %% Chamber Pressure v. Combustion Temperature v. Mixture Ratio
 figure;
@@ -60,9 +60,9 @@ grid on;
 xlabel("Chamber Pressure (Bar)");
 ylabel("Combustion Temperature (K)");
 title({"{\bf\fontsize{14} Chamber Pressure v. Temperature (Equilibrium)}" ...
-    '\fontsize{10} 75% C_{2}H_{5}OH + 25% H_{2}O/Gaseous O_{2} at 5km'}, ...
+    '\fontsize{10} 95% C_{2}H_{5}OH + 5% H_{2}O/N_{2}O at 500m'}, ...
     'FontWeight', 'Normal');
-saveas(gcf, 'cp_temp_mix.fig');
+% saveas(gcf, 'cp_temp_mix.fig');
 
 %% Chamber Pressure v. Molar Weight v. Mixture Ratio
 figure;
@@ -89,9 +89,9 @@ grid on;
 xlabel("Chamber Pressure (Bar)");
 ylabel("Exhaust Molecular Weight (kg/mol)");
 title({"{\bf\fontsize{14} Chamber Pressure v. Molar Weight (Equilibrium)}" ...
-    '\fontsize{10} 75% C_{2}H_{5}OH + 25% H_{2}O/Gaseous O_{2} at 5km'}, ...
+    '\fontsize{10} 95% C_{2}H_{5}OH + 5% H_{2}O/N_{2}O at 500m'}, ...
     'FontWeight', 'Normal');
-saveas(gcf, 'cp_molar_mix.fig');
+% saveas(gcf, 'cp_molar_mix.fig');
 
 %% Chamber Pressure v. Specific Heat Ratio v. Mixture Ratio
 figure;
@@ -118,9 +118,9 @@ grid on;
 xlabel("Chamber Pressure (Bar)");
 ylabel("Ratio of Specific Heats");
 title({"{\bf\fontsize{14} Chamber Pressure v. Specific Heat Ratio (Equilibrium)}" ...
-    '\fontsize{10} 75% C_{2}H_{5}OH + 25% H_{2}O/Gaseous O_{2} at 5km'}, ...
+    '\fontsize{10} 95% C_{2}H_{5}OH + 5% H_{2}O/N_{2}O at 500m'}, ...
     'FontWeight', 'Normal');
-saveas(gcf, 'cp_gamma_mix.fig');
+% saveas(gcf, 'cp_gamma_mix.fig');
 
 %% Functions
 function [dims, num_mr] = getNumMixtureRatios(data)
