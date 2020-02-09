@@ -5,6 +5,8 @@
 
 %% Preprocessing
 clc; clear; close all;
+disp(getPressureDrop(0.25, 0.015, 1, 'diameter'));
+
 %% Main
 numPoints = 100;
 figure('Position', [50 50 1080 720]);
