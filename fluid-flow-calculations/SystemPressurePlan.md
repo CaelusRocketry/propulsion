@@ -93,6 +93,7 @@ Total DP due to straight, bends, adapters: 2807 Pa + 740 Pa + 350 Pa + 1717 Pa =
 4) For a conservative estimate and assuming adpaters are rougher & more sudden and that elbows are more sudden, DP due to piping (aside from MPV) is around 0.1 MPa. This compensates for tank entrance effects and adapter from 1" to 0.5". Total final tank pressure required is therefore 2.935 MPa + 0.1 MPa = 3.035 MPa
     - Assuming isentropic expansion in the propellant tank and a base volume of 11.564 L, 10 second burn time = 1.39 kg ethanol = 1.762 L of ethanol = 9.802 L of ullage gas, initial tank pressure must be: 3.8253 MPa
 5) For calculating the thrust curve (and tank pressure as a function of time):
-    a) Choose a dt (maybe 0.01 seconds)
-    b) Use dt and initial mdot to find change in mass, use constant density to find change in volume in the tank, use change in volume in the tank and isentropic expansion to find new pressure inside the tank
-    c) Using initial chamber pressure to 
+    - Choose a dt (maybe 0.01 seconds)
+    - Use dt and initial mdot to find change in mass, use constant density to find change in volume in the tank, use change in volume in the tank and isentropic expansion to find new pressure inside the tank
+    - Using fixed pressure drop, get pressure before MPV (before the constricting adapter). Use constriction to find new mass flow rate and pressure. Use initial chamber pressure (therefore pressure just before manifold) to calculate DP across MPV. Then use same process to find the expansion (due to the adapter) and the final pressure and mass flow rate there.
+    - Use this DP for the MPV and assuming injector is always 25% pressure drop, use this to find new chamber pressure. Use new chamber pressure to find new mass flow rate from 
