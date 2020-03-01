@@ -25,7 +25,6 @@ C7H8(L)
 C7H16(L),n-hept
 C8H18(L),n-octa
 C8H18(L),isooct
-CL2(L)         
 HNO3(L)        
 H2(L)          
 H2O2(L)        
@@ -36,8 +35,6 @@ JP-10(g)
 Jet-A(L)       
 Jet-A(g)       
 NH3(L)         
-NH4CLO4(I)     
-NH4CLO4(II)    
 NH4NO3(IV)     
 NH4NO3(III)    
 NH4NO3(II)     

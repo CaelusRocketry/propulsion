@@ -1,8 +1,7 @@
- NH4CLO4(I) 
- AL(cr) 
- MgO(cr) 
+ C2H5OH(L) 
  H2O(L) 
+ N2O 
  ENDR
- C  H  O  S    
+   
     
     
