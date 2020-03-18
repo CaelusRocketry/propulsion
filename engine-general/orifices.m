@@ -10,9 +10,6 @@ n = 16; % number of ox orifices
 mtoto = 0.5552; % total ox mass flow rate in kg/s
 cdo = 0.9; % coeff of discharge for ox
 rhoo = 772.25; % density of oxidizer in kg/m^3
-disp('ox mdot per orifice');
-mdoto = cdo*(pi*(diamo/2)^2)*sqrt(2*rhoo*drop);
-disp(mdoto);
 disp('diameter of oxidizer orifice in m:');
 format long g % make decimal longer
 disp(2*(sqrt(mtoto/(n*cdo*pi*(sqrt(2*rhoo*drop)))))); %display the diameter in m
@@ -32,16 +29,16 @@ disp(ptimpo);
 disp('length of ox orifice');
 lengtho = 10 * diamo;
 disp(lengtho);
-
+disp('ox mdot per orifice');
+mdoto = cdo*(pi*(diamo/2)^2)*sqrt(2*rhoo*drop);
+disp(mdoto);
 %% fuel calcs
 disp('----------------fuel--------------------');
 nf = 8; % number of fuel orifices 
 mtotf = 0.1388; % total mass flow rate in kg/s
 cdf = 0.88; % coeff of discharge 
 rhof = 789; % density of oxidizer in kg/m^3
-disp('fuel mdot per orifice');
-mdotf = cdf*(pi*(diamf/2)^2)*sqrt(2*rhof*drop);
-disp(mdotf);disp('diameter of fuel orifice in m:');
+disp('diameter of fuel orifice in m:');
 format long g
 disp(2*(sqrt(mtotf/(nf*cdf*pi*(sqrt(2*rhof*drop)))))); %display the diameter
 diamf = (2*(sqrt(mtotf/(nf*cdf*pi*(sqrt(2*rhof*drop))))));
@@ -60,7 +57,9 @@ disp(ptimpf);
 disp('length of fuel orifice');
 lengthf = 10 * diamf;
 disp(lengthf);
-
+disp('fuel mdot per orifice');
+mdotf = cdf*(pi*(diamf/2)^2)*sqrt(2*rhof*drop);
+disp(mdotf);
 %% injector plate
 disp('----------------plate--------------------');
 diams = [diamo diamf]; %so you can do the max thing below
