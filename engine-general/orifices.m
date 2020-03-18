@@ -2,10 +2,7 @@ disp('------------------------------------');
 %% overall parameters
 drop = (1.5*10^6 *0.25); % pressure drop over injector in pascals
 angle = 60; % angle of impingement 
-diams = [diamo diamf]; %so you can do the max thing below
-plate = (max(diams) * 3); %                 THIS IS AN ESTIMATE AND NOT CALCULATED
-disp ('plate thickness in m');
-disp (plate);
+
 
 %% oxidizer calcs
 disp('------------------oxidizer------------------');
@@ -63,3 +60,10 @@ disp(ptimpf);
 disp('length of fuel orifice');
 lengthf = 10 * diamf;
 disp(lengthf);
+
+%% injector plate
+disp('----------------plate--------------------');
+diams = [diamo diamf]; %so you can do the max thing below
+plate = (max(diams) * 3); %                 THIS IS AN ESTIMATE 
+disp ('plate thickness in m');
+disp (plate);
