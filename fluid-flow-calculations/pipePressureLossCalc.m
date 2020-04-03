@@ -11,7 +11,7 @@ disp(getPressureDrop(0.25, 0.015, 1, 'diameter'));
 numPoints = 100;
 figure('Position', [50 50 1080 720]);
 subplot(2,2,1);
-diameter = linspace(0.5, 1.5, numPoints); % inches
+diameter = linspace(0.25, 1.0, numPoints); % inches
 roughness = 1.5e-06; % m
 deltaP = getPressureDrop(diameter, roughness, numPoints, 'diameter');
 plot(diameter, deltaP);
@@ -28,8 +28,8 @@ xlabel('Pipe Diameter (cm)');
 ylabel('Pressure Drop (MPa)');
 
 subplot(2,2,4);
-diameter = 0.5; % inches
-roughness = linspace(1.5e-06, 4.0e-05, numPoints);
+diameter = 0.25; % inches
+roughness = linspace(0.1e-06, 0.5e-06, numPoints);
 mmRoughness = roughness.*(1e03); % roughness in milimeters
 deltaP = getPressureDrop(diameter, roughness, numPoints, 'roughness');
 plot(mmRoughness, deltaP);
@@ -48,11 +48,11 @@ ylabel('Pressure Drop (MPa)');
 function deltaP = getPressureDrop(diam, rough, n, calc)
 deltaP = zeros(1,100);
 % Parameters
-mdot = 0.9133; % kg/s
-density = 786; % kg/m^3
-dvisc = 0.00196; % dynamic viscosity, kg/m*s
+mdot = 0.694; % kg/s
+density = 789; % kg/m^3
+dvisc = 0.001232; % dynamic viscosity, kg/m*s
 kvisc = dvisc/density; % kinematic viscosity, m^2/s
-len = 8; % m
+len = 2; % m
 g = 9.81; % m/s^2
 Q = mdot/density; % volumetric flow rate, m^3/s
 diam = diam/39.37; % convert inches to meters
@@ -71,7 +71,7 @@ if strcmp(calc, 'diameter') % solving for different diameters
                'Friction factor (f)'; 'Head loss (hf)'; ...
                'Pressure drop (delta P)'};
            Value = {diam(i); V; re; ed; ff; hf; deltaP(i)};
-           Unit = {'m'; 'm/s'; 'None'; 'None'; 'None'; 'm'; 'Pa'};
+           Unit = {'m'; 'm/s'; 'None'; 'None'; 'None'; 'm'; 'MPa'};
            example = table(Value, Unit, 'RowNames', parameters);
            fprintf('Example calculation for i=%d: \n', i);
            disp(example);
