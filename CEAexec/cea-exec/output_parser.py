@@ -6,8 +6,18 @@ import os
 import csv
 
 if __name__ == "__main__":
-    csv_filename = "ethanol-95-n2o/ethanol-95-n2o.csv"
-    cea_filename = "ethanol-95-n2o/ethanol-95-n2o.out"
+    print("Please enter the path to (and inluding) the .inp file. Current directory: {}".format(os.getcwd()))
+    dir_name = input("Example: \"ethanol-95-n2o/ethanol-95-n2o.inp\": ")
+    while os.path.exists(dir_name) == False:
+        if dir_name == "0":
+            sys.exit(0)
+        print("Path invalid. Please try again. Current directory: {}".format(os.getcwd()))
+        dir_name = input("Please enter the path to (and including) the .inp file (enter 0 to exit): ")
+    dot_index = dir_name.index(".")
+    dir_name = dir_name[:dot_index]
+
+    csv_filename = f"{dir_name}.csv"
+    cea_filename = f"{dir_name}.out"
     delimiter = "THEORETICAL ROCKET PERFORMANCE ASSUMING EQUILIBRIUM"
     with open(csv_filename, mode='w', newline="") as csv_f:
         with open(cea_filename, mode='r') as cea_f:
