@@ -73,7 +73,7 @@ if __name__ == "__main__":
         line_9 = "  fuel=H2O(L) wt=5  t,k={}\n".format(temperature)
         f.write(line_9)
         line_10 = "  oxid=N2O wt=100  t,k={}\n".format(temperature)
-        # line_10 = "  oxid=O2(L) wt=100  t,k={}\n".format(lox_temp)
+        # For liquid oxygen: line_10 = "  oxid=O2(L) wt=100  t,k={}\n".format(lox_temp)
         f.write(line_10)
         line_11 = "end"
         f.write(line_11)

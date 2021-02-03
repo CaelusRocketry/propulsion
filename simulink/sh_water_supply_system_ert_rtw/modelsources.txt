@@ -1,2 +1,0 @@
-  sh_water_supply_system.cpp
-
