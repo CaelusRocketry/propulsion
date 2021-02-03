@@ -43,10 +43,10 @@ def ethanol_readings():
     density_Eth = 0.78945
     mdot = take_inputs("Mass flow rate (kg/s): ")
     OF = take_inputs("Oxidizer to fuel ratio: ")
-    V_initEth = take_inputs("Initial ethanol volume (m^3): ")
+    V_initEth = take_inputs("Initial ethanol volume (L): ")
     burn_time = take_inputs("Burn time (s): ")
     P_initEth = take_inputs("Initial chamber pressure (Pa): ")
-    V_cham = take_inputs("Initial chamber volume (L): ")
+    V_cham = take_inputs("Chamber volume (L): ")
     ethanol_calculations()
 
 def ethanol_calculations():
