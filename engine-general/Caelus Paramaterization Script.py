@@ -1,5 +1,5 @@
 # Caelus Engine Parameterization Script
-# Daniel DeConti, Tanmay Neema, Liam West, Jessica Chen, Project Caelus - 4 February 2021
+# Daniel DeConti, np.tanmay Neema, Liam West, Jessica Chen, Project Caelus - 4 February 2021
 # With too much code copy/pasted from Jason Chen
 '''
 Inputs
@@ -9,11 +9,11 @@ Inputs
         - ALT = Optimal Altitude (m)
     New
         - B = Burn Time (s)
-        - Cv = Coefficient of flow (Gal/minute-sqrt(psi))
+        - Cv = Coefficient of flow (Gal/minute-np.sqrt(psi))
         - U = Ullage (%)
         - Sg = Specific gravity
         - DP = Pressure drop across injector (%)
-        - VT = Tank volume (L)
+        - VT = np.tank volume (L)
         - T = Temperature (K)
 
     CEAgui
@@ -48,8 +48,8 @@ OUTPUTS:
         - Volumetric fuel flow rate
         - Volumetric oxidizer flow rate
         - System pressure drop (?)
-        - Initial ethanol tank pressure
-        - Initial nitrous tank pressure
+        - Initial ethanol np.tank pressure
+        - Initial nitrous np.tank pressure
 '''
 import os
 import sys
@@ -67,13 +67,15 @@ def input_variables():
     print('Input variables using a .txt file. Enter floats only')
     print('Please list them in the order they are listed at the top of the file, i.e. \n Thrust:___ \n Chamber Pressure:___ \n . \n . \n .')
     file_path = input("Enter file path with .txt: ")
-    input_vars = []
+
+    input_vars = dict()
     try:
         with open(file_path) as f:
             for line in f:
-                colon_index = line.find(':')
-                value = float(line[colon_index+1:])
-                input_vars.append(value)
+                colon_index = line.find('=')
+                name = float(line[:colon_index].strip())
+                value = float(line[colon_index+1:].strip())
+                input_vars[name] = value
     except IOError:
         print('Please ensure input.txt is named correctly and in the correct depository')
     except ValueError:
@@ -111,7 +113,7 @@ def ceagui_inp():
     if frozen:
         nfz = 1
     h = float(input("Enter altitude (m):"))
-    P0 = input_variables[2]
+    P0 = input_vars[2]
     P3 = get_exit_pressure(h)
     pressure_ratio = P0/P3
     OF = input_vars[-2]
@@ -119,9 +121,9 @@ def ceagui_inp():
 
     # Make the file
     global ceagui_inp,ceagui_inp_name
-    ceagui_inp = file_path[:file_path.find(".")-1] + "_ceagui"
-    slash_instances = [index for index, val in enumerate(ceagui_inp) if val == "/" or "\\"]
-    ceagui_inp_name = ceagui_inp[ceagui_inp[max(slash_instances):]]
+    ceagui_inp = file_path[:file_path.find(".")-1] + "_ceag ui"
+    slash_insnp.tances = [index for index, val in enumerate(ceagui_inp) if val == "/" or "\\"]
+    ceagui_inp_name = ceagui_inp[ceagui_inp[max(slash_insnp.tances):]]
     with open(ceagui_inp + ".inp", "w+") as f:
         line_1 = "problem  case={} o/f={}\n".format(ceagui_inp_name, input_vars[-2])
         f.write(line_1)
@@ -134,7 +136,7 @@ def ceagui_inp():
         f.write(line_2)
         line_3 = "  p,bar={}\n".format(P0)
         f.write(line_3)
-        line_4 = "  pi/p={}.4f\n".format(pressure_ratio)
+        line_4 = "  np.pi/p={}.4f\n".format(pressure_ratio)
         f.write(line_4)
         line_7 = "react\n"
         f.write(line_7)
@@ -235,25 +237,25 @@ def calculate():
         R = (8314.3 / M)
         PR = (P3 / P0)
         AR = (((k + 1) / 2) ** (1 / (k - 1))) * ((P3 / P0) ** (1 / k)) * (
-            sqrt(((k + 1) / (k - 1)) * (1 - ((P3 / P0) ** ((k - 1) / k)))))
+            np.sqrt(((k + 1) / (k - 1)) * (1 - ((P3 / P0) ** ((k - 1) / k)))))
         ER = 1 / AR
         Tt = (2 * T0) / (k + 1)
-        v2 = sqrt((2 * k / (k - 1)) * ((R) * T0) * (1 - ((P3 / P0) ** ((k - 1) / k))))
+        v2 = np.sqrt((2 * k / (k - 1)) * ((R) * T0) * (1 - ((P3 / P0) ** ((k - 1) / k))))
         mdot = F / v2
         mdot_fuel = (mdot / (OF + 1))
         mdot_oxidizer = (mdot / (OF + 1)) * OF
         Isp = F / (mdot * 9.80655)
         Te = T0 / ((P0 / P3) ** ((k - 1) / k))
-        Mnum = (v2 / (sqrt(k * (R) * (Te))))
-        At = ((mdot) * (sqrt((k * R * T0)))) / (k * P0 * (sqrt(((2 / (k + 1)) ** ((k + 1) / (k - 1))))))
+        Mnum = (v2 / (np.sqrt(k * (R) * (Te))))
+        At = ((mdot) * (np.sqrt((k * R * T0)))) / (k * P0 * (np.sqrt(((2 / (k + 1)) ** ((k + 1) / (k - 1))))))
         Ae = ER * At
-        Rt = sqrt(At / pi)
-        Re = sqrt(Ae / pi)
+        Rt = np.sqrt(At / np.pi)
+        Re = np.sqrt(Ae / np.pi)
         Ac = Ae
-        Rc = sqrt((Ac) / pi)
+        Rc = np.sqrt((Ac) / np.pi)
         Lc = ((At) * Lstar) / (Ac)
-        Ldn = ((Re) - (Rt)) / (tan(radians(15)))
-        Lcn = ((Rc) - (Rt)) / (tan(radians(45)))
+        Ldn = ((Re) - (Rt)) / (np.tan(np.deg2rad(15)))
+        Lcn = ((Rc) - (Rt)) / (np.tan(np.deg2rad(45)))
 
 
     except (ValueError, ZeroDivisionError):  # Exception thrown

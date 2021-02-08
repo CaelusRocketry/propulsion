@@ -25,6 +25,7 @@ if __name__ == "__main__":
         dir_name = input("Please enter the path to (and including) the .inp file (enter 0 to exit): ")
     dot_index = dir_name.index(".")
     dir_name = dir_name[:dot_index]
+    print(dir_name)
     t1 = threading.Thread(target=type_with_delay, args=(dir_name, 0.25), daemon=True)
     t1.start()
     subprocess.call(["FCEA2m.exe"])

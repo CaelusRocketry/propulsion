@@ -1,0 +1,35 @@
+
+ *******************************************************************************
+
+         NASA-GLENN CHEMICAL EQUILIBRIUM PROGRAM CEA2, MAY 21, 2004
+                   BY  BONNIE MCBRIDE AND SANFORD GORDON
+      REFS: NASA RP-1311, PART I, 1994 AND NASA RP-1311, PART II, 1996
+
+ *******************************************************************************
+
+
+
+ problem  case=aphlex-1c o/f=4.0,
+       rocket  equilibrium
+   p,bar=20.0,
+   pi/p=19.724,
+ react
+   fuel=C2H5OH(L) wt=95  t,k=298
+   fuel=H2O(L) wt=5  t,k=298
+   oxid=N2O wt=100  t,k=298
+ end
+
+ OPTIONS: TP=F  HP=F  SP=F  TV=F  UV=F  SV=F  DETN=F  SHOCK=F  REFL=F  INCD=F
+ RKT=T  FROZ=F  EQL=T  IONS=F  SIUNIT=T  DEBUGF=F  SHKDBG=F  DETDBG=F  TRNSPT=F
+
+ TRACE= 0.00E+00  S/R= 0.000000E+00  H/R= 0.000000E+00  U/R= 0.000000E+00
+
+ Pc,BAR =    20.000000
+
+ Pc/P =    19.7240
+
+ SUBSONIC AREA RATIOS =
+
+ SUPERSONIC AREA RATIOS =
+
+ NFZ=  1  Mdot/Ac= 0.000000E+00  Ac/At= 0.000000E+00

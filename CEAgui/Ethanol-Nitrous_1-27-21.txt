@@ -1,0 +1,10 @@
+problem   case=Ethanol-Nitrous 1/27/21 o/f=4.0,
+    rocket  frozen  nfz=1 
+  p,bar=28,
+  pi/p=37,
+  sup,ae/at=2,6.4366,10,30,
+react  
+  fuel=C2H5OH(L) wt=95  t,k=298  
+  fuel=H2O(L) wt=5  t,k=298  
+  oxid=N20(L) wt=100  t,k=298
+end
