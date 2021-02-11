@@ -1,0 +1,15 @@
+#  EXAMPLE 10:
+#     (a)  Rocket problem with a finite-area combustor (rocket fac).
+#     (b)  A ratio of mass flow rate to chamber area of 1333.9 (ma=1333.9)
+#          is assigned.  This value was calculated from the results 
+#          of example 9 where a contraction ratio of 1.58 was assigned.
+#     (c)  Fuel, oxidant, and the remaining parameters are the same as in 
+#          examples 8 and 9.
+
+reac  fuel=H2(L)  t,k=20.27
+      oxid=O2(L)  t,k=90.17
+problem  o/f=5.55157 case=10  rocket  fac  p,bar=53.3172 ma=1333.9  
+         pi/p=10,100,1000, sup,ae/at=25,50,75
+output  short
+end
+

@@ -1,0 +1,5 @@
+problem    o/f=4.0,
+    tp   t,k=161,  p,bar=15,
+react  
+  fuel=N2O wt=100  t,k=161  
+end

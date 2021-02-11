@@ -1,0 +1,12 @@
+problem   case=8 o/f=5.55157,
+      rocket  equilibrium  tcest,k=3000
+  p,bar=53.3172,
+  pi/p=10,100,1000,
+  sub,ae/at=1.58,
+  sup,ae/at=25,50,75,
+react  
+  fuel=H2(L) wt=100.  t,k=20.27  
+  oxid=O2(L) wt=100.  t,k=90.17  
+output  
+     siunits
+end

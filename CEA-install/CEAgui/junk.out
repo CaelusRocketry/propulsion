@@ -1,0 +1,105 @@
+
+ *******************************************************************************
+
+         NASA-GLENN CHEMICAL EQUILIBRIUM PROGRAM CEA2, MAY 21, 2004
+                   BY  BONNIE MCBRIDE AND SANFORD GORDON
+      REFS: NASA RP-1311, PART I, 1994 AND NASA RP-1311, PART II, 1996
+
+ *******************************************************************************
+
+
+
+ problem    o/f=4.0,
+     tp   t,k=161,  p,bar=15,
+ react
+   fuel=N2O wt=100  t,k=161
+ end
+
+ OPTIONS: TP=T  HP=F  SP=F  TV=F  UV=F  SV=F  DETN=F  SHOCK=F  REFL=F  INCD=F
+ RKT=F  FROZ=F  EQL=F  IONS=F  SIUNIT=T  DEBUGF=F  SHKDBG=F  DETDBG=F  TRNSPT=F
+
+ T,K =   161.0000
+
+ TRACE= 0.00E+00  S/R= 0.000000E+00  H/R= 0.000000E+00  U/R= 0.000000E+00
+
+ P,BAR =    15.000000
+
+    REACTANT          WT.FRAC   (ENERGY/R),K   TEMP,K  DENSITY
+        EXPLODED FORMULA
+ F: N2O              1.000000   0.923393E+04   161.00  0.0000
+          N  2.00000  O  1.00000
+
+  SPECIES BEING CONSIDERED IN THIS SYSTEM
+ (CONDENSED PHASE MAY HAVE NAME LISTED SEVERAL TIMES)
+  LAST thermo.inp UPDATE:    9/09/04
+
+  g 5/97  *N               tpis89  *NO              g 4/99  NO2            
+  j12/64  NO3              tpis78  *N2              g 4/99  N2O            
+  g 4/99  N2O3             tpis89  N2O4             g 4/99  N2O5           
+  tpis89  N3               g 5/97  *O               tpis89  *O2            
+  g 8/01  O3             
+
+ O/F =   4.000000
+
+                       EFFECTIVE FUEL     EFFECTIVE OXIDANT        MIXTURE
+ ENTHALPY                  h(2)/R              h(1)/R               h0/R
+ (KG-MOL)(K)/KG        0.20980110E+03      0.00000000E+00      0.41960220E+02
+
+ KG-FORM.WT./KG             bi(2)               bi(1)               b0i
+  *N                   0.45441326E-01      0.00000000E+00      0.90882652E-02
+  *O                   0.22720663E-01      0.00000000E+00      0.45441326E-02
+
+ POINT ITN      T            N           O 
+   1   22     161.000     -10.784     -11.946
+ THE TEMPERATURE=  0.1610E+03 IS OUT OF RANGE FOR POINT    1(EQLBRM)
+
+
+
+
+               THERMODYNAMIC EQUILIBRIUM PROPERTIES AT ASSIGNED
+
+                           TEMPERATURE AND PRESSURE
+
+ CASE =                
+
+             REACTANT                    WT FRACTION      ENERGY      TEMP
+                                          (SEE NOTE)     KJ/KG-MOL      K  
+ FUEL        N2O                          1.0000000     76775.636    161.000
+
+ O/F=    4.00000  %FUEL= 20.000000  R,EQ.RATIO= 0.000000  PHI,EQ.RATIO= 0.000000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            15.000
+ T, K              161.00
+ RHO, KG/CU M    1.6439 2
+ H, KJ/KG         -27.237
+ U, KJ/KG         -36.362
+ G, KJ/KG         -203.86
+ S, KJ/(KG)(K)     1.0971
+
+ M, (1/n)         146.709
+ (dLV/dLP)t      -1.00000
+ (dLV/dLT)p        1.0000
+ Cp, KJ/(KG)(K)    0.1983
+ GAMMAs            1.4003
+ SON VEL,M/SEC      113.0
+
+ MOLE FRACTIONS
+
+ *N2              0.66667
+ *O2              0.33333
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+    PRODUCTS WHICH WERE CONSIDERED BUT WHOSE MOLE FRACTIONS
+    WERE LESS THAN 5.000000E-06 FOR ALL ASSIGNED CONDITIONS
+
+ *N              *NO             NO2             NO3             N2O            
+ N2O3            N2O4            N2O5            N3              *O             
+ O3             
+
+ NOTE. WEIGHT FRACTION OF FUEL IN TOTAL FUELS AND OF OXIDANT IN TOTAL OXIDANTS
+
+
+

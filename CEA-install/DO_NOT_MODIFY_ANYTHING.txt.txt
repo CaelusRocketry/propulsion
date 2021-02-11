@@ -1,0 +1,5 @@
+DO NOT MODIFY anything in this folder. CEA is no longer easily downloadable online, so we're keeping
+an untouched, fresh copy of CEAgui and CEAexec in this folder. New propulsion members can just copy 
+these two folders onto their local computers to have access to this software.
+
+-Jason Chen 02/11/2021

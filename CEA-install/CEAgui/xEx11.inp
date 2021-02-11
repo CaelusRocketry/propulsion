@@ -1,0 +1,21 @@
+#  EXAMPLE 11:
+#     (a)  Rocket problem with an infinite-area combustor (rocket).
+#     (b)  Reactants are Li(cr) at 298.15 K and F2(L) at 85.02 K.
+#          Enthalpies and "exploded" formulas are to be taken from
+#          thermo.lib.  Thus this information is not given.
+#     (c)  Relative amounts of reactants are given as moles.
+#     (d)  Chamber pressure is 1000 psia (p,psia =1000).
+#     (e)  Ionized species are to be included in the products (ions).
+#     (f)  Only equilibrium calculations are to be performed (equilibrium).
+#     (g)  For exit points, one pressure ratio (pi/p=68.0457), one 
+#          subsonic area ratio (sub,ae/at=10), and three supersonic area ratios
+#          (sup,ae/at=10,20,100) are to be included.
+
+reac   fuel=Li(cr) moles=1.    t(k)=298.15  
+       oxid=F2(L)  moles=.5556 t(k)=85.02   
+prob   case=11 rocket  equilibrium  p,psia=1000 ions
+        pi/p=68.0457, sub,ae/at=10, sup,ae/at=10,20,100
+output siunits transport   
+end
+
+

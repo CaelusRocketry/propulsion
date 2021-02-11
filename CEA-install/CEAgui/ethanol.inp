@@ -1,0 +1,8 @@
+problem    o/f=1.3,1.4,1.5,1.6,
+    rocket  equilibrium  frozen  nfz=1 
+  p,bar=20,
+react  
+  fuel=C2H5OH(L) wt=75  t,k=298  
+  oxid=O2 wt=100  t,k=298  
+  name=H2O(L) wt=25  t,k=298  
+end

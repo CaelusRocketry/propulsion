@@ -1,0 +1,160 @@
+ ------- INPUTS -------                      
+                                             
+Thrust:  5000 N                              
+Chamber pressure:  2000000 Pa                
+Ambient pressure:  54019.39725 Pa            
+O/F ratio: 1.3                               
+Combustion temperature: 3058.21 K            
+Molecular mass: 23.199 kg/mol                
+Gamma: 1.1251                                
+Characteristic chamber length: 2 m            
+                                             
+ ------- OUTPUTS -------                     
+                                             
+Specific impulse (at altitude):  260.3845 sec
+Throat temperature:  2878.1799 K             
+Effective exhaust velocity:  2553.4740 m/sec 
+Mass flow rate:  1.9581 kg/sec               
+Mass flow rate (oxidizer):  1.1068 kg/sec    
+Mass flow rate (fuel):  0.8514 kg/sec        
+Exit temperature:  2046.7641 K               
+Exit Mach number:  2.8108                    
+Pressure ratio:  0.0270                      
+Expansion ratio:  6.4366                     
+                                             
+ ------- NOZZLE DIMENSIONS -------           
+                                             
+Area of the throat:  0.0016178 m^2           
+Area of the exit:  0.0104131 m^2             
+Throat radius:  0.0226928 m                  
+Exit radius:  0.0575726 m                    
+Chamber radius:  0.0575726 m                 
+Chamber length:  0.3107237 m                 
+Length of the diverging nozzle:  0.1301732 m 
+Length of the converging nozzle:  0.0348798 m
+
+
+
+
+
+
+
+
+
+ ------- INPUTS -------
+
+Thrust:  5000 N
+Chamber pressure:  2000000 Pa
+Ambient pressure:  54019.39725 Pa
+O/F ratio: 1.3
+Combustion temperature: 3058.21 K
+Molecular mass: 23.199 kg/mol
+Gamma: 1.1251
+Characteristic chamber length: 1.5 m
+
+ ------- OUTPUTS -------
+
+Specific impulse (at altitude):  260.3845 sec
+Throat temperature:  2878.1799 K
+Effective exhaust velocity:  2553.4740 m/sec
+Mass flow rate:  1.9581 kg/sec
+Mass flow rate (oxidizer):  1.1068 kg/sec
+Mass flow rate (fuel):  0.8514 kg/sec
+Exit temperature:  2046.7641 K
+Exit Mach number:  2.8108
+Pressure ratio:  0.0270
+Expansion ratio:  6.4366
+
+ ------- NOZZLE DIMENSIONS -------
+
+Area of the throat:  0.0016178 m^2
+Area of the exit:  0.0104131 m^2
+Throat radius:  0.0226928 m
+Exit radius:  0.0575726 m
+Chamber radius:  0.0575726 m
+Chamber length:  0.2330428 m
+Length of the diverging nozzle:  0.1301732 m
+Length of the converging nozzle:  0.0348798 m
+
+
+
+
+
+
+
+
+ ------- INPUTS -------
+
+Thrust:  5000 N
+Chamber pressure:  2000000 Pa
+Ambient pressure:  54019.39725 Pa
+O/F ratio: 1.3
+Combustion temperature: 3058.21 K
+Molecular mass: 23.199 kg/mol
+Gamma: 1.1251
+Characteristic chamber length: 1.75 m
+
+ ------- OUTPUTS -------
+
+Specific impulse (at altitude):  260.3845 sec
+Throat temperature:  2878.1799 K
+Effective exhaust velocity:  2553.4740 m/sec
+Mass flow rate:  1.9581 kg/sec
+Mass flow rate (oxidizer):  1.1068 kg/sec
+Mass flow rate (fuel):  0.8514 kg/sec
+Exit temperature:  2046.7641 K
+Exit Mach number:  2.8108
+Pressure ratio:  0.0270
+Expansion ratio:  6.4366
+
+ ------- NOZZLE DIMENSIONS -------
+
+Area of the throat:  0.0016178 m^2
+Area of the exit:  0.0104131 m^2
+Throat radius:  0.0226928 m
+Exit radius:  0.0575726 m
+Chamber radius:  0.0575726 m
+Chamber length:  0.2718833 m
+Length of the diverging nozzle:  0.1301732 m
+Length of the converging nozzle:  0.0348798 m
+
+
+
+
+
+
+
+ ------- INPUTS -------                       
+                                              
+Thrust:  5000 N                               
+Chamber pressure:  2000000 Pa                 
+Ambient pressure:  54019.39725 Pa             
+O/F ratio: 1.3                                
+Combustion temperature: 3058.21 K             
+Molecular mass: 23.199 kg/mol                 
+Gamma: 1.1251                                 
+Characteristic chamber length: 1.65 m         
+                                              
+ ------- OUTPUTS -------                      
+                                              
+Specific impulse (at altitude):  260.3845 sec 
+Throat temperature:  2878.1799 K              
+Effective exhaust velocity:  2553.4740 m/sec  
+Mass flow rate:  1.9581 kg/sec                
+Mass flow rate (oxidizer):  1.1068 kg/sec     
+Mass flow rate (fuel):  0.8514 kg/sec         
+Exit temperature:  2046.7641 K                
+Exit Mach number:  2.8108                     
+Pressure ratio:  0.0270                       
+Expansion ratio:  6.4366                      
+                                              
+ ------- NOZZLE DIMENSIONS -------            
+                                              
+Area of the throat:  0.0016178 m^2            
+Area of the exit:  0.0104131 m^2              
+Throat radius:  0.0226928 m                   
+Exit radius:  0.0575726 m                     
+Chamber radius:  0.0575726 m                  
+Chamber length:  0.2563471 m                  
+Length of the diverging nozzle:  0.1301732 m  
+Length of the converging nozzle:  0.0348798 m 
