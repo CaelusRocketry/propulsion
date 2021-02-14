@@ -1,0 +1,5 @@
+o/f = 4
+frozen = 1
+p0 = 20
+altitude = 0
+temp = 298

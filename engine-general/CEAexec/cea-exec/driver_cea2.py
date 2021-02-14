@@ -30,6 +30,6 @@ if __name__ == "__main__":
     t1.start()
     subprocess.call(["FCEA2m.exe"])
     t1.join()
-    slash_instances = [index for index, val in enumerate(dir_name) if val == "/"]
+    slash_instances = [index for index, val in enumerate(dir_name) if val == "/" or "\\"]
     print("Operation complete. {}.out saved to {}.out".format(dir_name[max(slash_instances)+1:], dir_name))
     

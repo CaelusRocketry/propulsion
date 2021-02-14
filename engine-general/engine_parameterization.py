@@ -61,17 +61,20 @@ import subprocess
 import threading
 import pyautogui
 
+py_dir = os.path.dirname(__file__)
+os.chdir(py_dir)
+cea_exe_dir = "./CEAexec/cea-exec/"
+
 # Input non-CEAgui vars from text file
 def input_variables():
-    global file_path, input_vars
-    print('Input variables using a .txt file. Enter floats only')
-    print('Please list them in the order they are listed at the top of the file, i.e. \n Thrust:___ \n Chamber Pressure:___ \n . \n . \n .')
-    file_path = input("Enter file path with .txt: ")
+    global file_ext, input_vars
+    print('Input variables using a .txt file. Enter floats only. Ensure file is within folder of .py file.')
+    print('Please list them in the order they are listed at the top of the file, i.e. \n Thrust=___ \n Chamber Pressure=___ \n . \n . \n .')
+    file_ext = input("Enter file path with .txt: ")
 
     input_vars = dict()
     try:
-        input_vars["case"] = "aphlex-1c"
-        with open(file_path) as f:
+        with open(file_ext) as f:
             for line in f:
                 equal_index = line.find('=')
                 name = line[:equal_index].strip()
@@ -81,7 +84,6 @@ def input_variables():
         print('Please ensure input.txt is named correctly and in the correct depository')
     except ValueError:
         print('Please ensure inputs are entered as floats with no other text in the file')
-    input_vars['temp'] = int(input_vars['temp'])
     input_vars["frozen"] = "frozen nfz=1" if bool(input_vars["frozen"]) else "equilibrium"
     ceagui_inp()
 
@@ -107,18 +109,14 @@ def get_exit_pressure(h: int or float):
 
 def ceagui_inp():
     p3 = get_exit_pressure(input_vars["altitude"])
-    pressure_ratio = round(input_vars["p0"] * 100000 / p3, 3)
+    pressure_ratio = round(input_vars["p0"]*100000 / p3, 3)
 
     # Make the file
-    global ceagui_name, directory_name
-    directory_name = os.path.dirname(file_path)
-    file_name = os.path.basename(file_path)
-    general_name = file_name.split(".")[0]
-
-    ceagui_name = general_name + "_ceagui"
-
-    with open(ceagui_name + ".inp", "w+") as f:
-        line_1 = f"problem  case={input_vars['case']} o/f={input_vars['o/f']},\n"
+    global ceagui_name
+    file_name = file_ext.split(".")[0]
+    ceagui_name = file_name + "_ceagui"
+    with open(cea_exe_dir + ceagui_name + ".inp", "w+") as f:
+        line_1 = f"problem  case={ceagui_name} o/f={input_vars['o/f']},\n"
         f.write(line_1)
         line_2 = f"      rocket  {input_vars['frozen']}\n"
         f.write(line_2)
@@ -137,7 +135,7 @@ def ceagui_inp():
         line_9 = "end"
         f.write(line_9)
         f.close()
-        print("Operation complete. {} saved to {}".format(ceagui_name + ".inp", os.getcwd()))
+        print(f"Operation complete. {ceagui_name}.inp saved to {cea_exe_dir}")
         driver_cea()
 
 def type_with_delay(dir_name: str, delay: int or float):
@@ -147,59 +145,53 @@ def type_with_delay(dir_name: str, delay: int or float):
     pyautogui.press("enter")
 
 def driver_cea():
-    t1 = threading.Thread(target=type_with_delay, args=("C:\\Users\\Ron\\ProjectCaelus\\propulsion\\aphlex_1c_ceagui", 0.25), daemon=True)
+    t1 = threading.Thread(target=type_with_delay, args=(ceagui_name, 0.25), daemon=True)
     t1.start()
-    subprocess.call(["CEAexec\\cea-exec\\FCEA2m.exe"])
+    subprocess.call([cea_exe_dir + "FCEA2m.exe"],  cwd = cea_exe_dir)
     t1.join()
-    print("Operation complete. {}.out saved to {}.out".format(ceagui_name, ceagui_name))
+    print(f"Operation complete. {ceagui_name}.out saved to {cea_exe_dir}")
     cea_outparse()
 
 def cea_outparse():
     global cea_filename
     csv_filename = f"{ceagui_name}.csv"
     cea_filename = f"{ceagui_name}.out"
-    delimiter = "THEORETICAL ROCKET PERFORMANCE ASSUMING EQUILIBRIUM"
-    with open(csv_filename, mode='w', newline="") as csv_f:
-        with open(cea_filename, mode='r') as cea_f:
+    delimiter = "THEORETICAL ROCKET PERFORMANCE"
+    with open(cea_exe_dir + csv_filename, mode='w', newline="") as csv_f:
+        with open(cea_exe_dir + cea_filename, mode='r') as cea_f:
             cea_lines = cea_f.readlines()
             file_writer = csv.writer(csv_f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            unique_rows = set()
             row = ["O/F", "P0 (BAR)", "P1 (BAR)", "T0 (K)", "M (1/n)", "GAMMA", "CSTAR (M/SEC)", "ISP (M/SEC)"]
-            dims = len(row)
-            for i, line in enumerate(cea_lines):
-                if delimiter in line:  # Clear the row and append to a new one
-                    assert len(row) == dims
-                    if str(row) not in unique_rows:
-                        unique_rows.add(str(row))
-                        file_writer.writerow(row)
-                        print(row)
-                    row = []
-                    continue
-                line = line.strip()
+            file_writer.writerow(row)
+            vals = []
+            for line in cea_lines:
+                if delimiter in line:
+                    vals = []
                 if "O/F=" in line:
                     temp = line.split()
-                    row.append(temp[1])
+                    vals.append(temp[1])
                 if "P, BAR" in line:
                     temp = line.split()
-                    row.append(temp[2])
-                    row.append(temp[3])
+                    vals.append(temp[2])
+                    vals.append(temp[3])
                 if "T, K" in line:
                     temp = line.split()
-                    row.append(temp[2])
+                    vals.append(temp[2])
                 if "M, (1/n)" in line:
                     temp = line.split()
-                    row.append(temp[2])
+                    vals.append(temp[2])
                 if "GAMMAs" in line:
                     temp = line.split()
-                    row.append(temp[1])
+                    vals.append(temp[1])
                 if "CSTAR, M/SEC" in line:
                     temp = line.split()
-                    row.append(temp[2])
+                    vals.append(temp[2])
                 if "Isp, M/SEC" in line:
                     temp = line.split()
-                    row.append(temp[2])
+                    vals.append(temp[2])
+        file_writer.writerow(vals)
     print("Operation complete. CSV file saved to {}".format(csv_filename))
-    # calculate()
+    #calculate()
 
 def calculate():
     """
@@ -207,7 +199,6 @@ def calculate():
     """
     global cea_outputs
     cea_outputs= []
-    print(cea_filename)
     with open(cea_filename) as f:
         for line in f:
             print(line)

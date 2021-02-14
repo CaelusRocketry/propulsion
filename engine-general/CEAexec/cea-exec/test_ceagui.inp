@@ -1,0 +1,9 @@
+problem  case=smthn_ceagui o/f=4.0,
+      rocket  frozen nfz=1
+  p,bar=20.0,
+  pi/p=19.724,
+react
+  fuel=C2H5OH(L) wt=95  t,k=298.0
+  fuel=H2O(L) wt=5  t,k=298.0
+  oxid=N2O wt=100  t,k=298.0
+end
