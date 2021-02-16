@@ -1,29 +1,37 @@
 # Caelus Engine Parameterization Script
-# Daniel DeConti, np.tanmay Neema, Liam West, Jessica Chen, Project Caelus - 4 February 2021
-# With too much code copy/pasted from Jason Chen
-'''
-Inputs
+# Authors: Tanmay Neema, Daniel DeConti, Jessica Chen, Liam West
+# Original code & methods sourced from Jason Chen
+# Project Caelus, 04 February 2021
+
+# TODO: @Tanmay: Remove all uses of "global" and instead just pass around variables using return
+# TODO: @Tanmay: Use a config.json file to take all inputs. Should have a single input() call only at the beginning asking
+# whether the user wants to input via input() or via the config.json. Google for JSON tutorials; it's basically a dictionary.
+# TODO: @Tanmay: Make the for loop in calcluate() that gets CEA vars write to a dictionary, not an array (so it's cleaner)
+# TODO: @Tanmay: Write the outputs to a .txt/.csv file, and also print. Should output both inputs and outputs.
+
+"""
+INPUTS:
     Driving Parameters
         - F = Thrust (N)
-        - P0 = Chamber Pressure (Pa)
-        - ALT = Optimal Altitude (m)
+        - P0 = Chamber pressure (Pa)
+        - ALT = Optimal altitude (m)
     New
-        - B = Burn Time (s)
-        - Cv = Coefficient of flow (Gal/minute-np.sqrt(psi))
-        - U = Ullage (%)
-        - Sg = Specific gravity
+        - B = Burn time (s)
+        - Cv = Coefficient of flow (gal/min - sqrt(psi))
+        - U = Ullage (% of tank volume)
+        - Sg = Specific gravity (dimensionless)
         - DP = Pressure drop across injector (%)
-        - VT = np.tank volume (L)
+        - VT = Tank volume (L)
         - T = Temperature (K)
-
     CEAgui
-        - k = Ratio of Specific Heats
+        - k = Ratio of specific heats (dimensionless)
         - T0 = Combustion Temperature (K)
         - M = Molecular Mass of Gas (kg/mol)
         - O/F = Oxidizer to Fuel Ratio
         - L* = Characteristic Chamber Length (m)
+
 OUTPUTS:
-    Nozzlecalc
+    Nozzle & General Engine Parameters
         - Isp = Specific impulse at altitude, sec
         - Tt = Throat temperature, K
         - v2 = Effective exhaust velocity, m/sec
@@ -50,7 +58,8 @@ OUTPUTS:
         - System pressure drop (?)
         - Initial ethanol np.tank pressure
         - Initial nitrous np.tank pressure
-'''
+"""
+
 import os
 import sys
 import csv
@@ -61,6 +70,7 @@ import subprocess
 import threading
 import pyautogui
 
+# Preprocessing
 py_dir = os.path.dirname(__file__)
 os.chdir(py_dir)
 cea_exe_dir = "./CEAexec/cea-exec/"
@@ -68,22 +78,22 @@ cea_exe_dir = "./CEAexec/cea-exec/"
 # Input non-CEAgui vars from text file
 def input_variables():
     global file_ext, input_vars
-    print('Input variables using a .txt file. Enter floats only. Ensure file is within folder of .py file.')
-    print('Please list them in the order they are listed at the top of the file, i.e. \n Thrust=___ \n Chamber Pressure=___ \n . \n . \n .')
+    print("Input variables using a .txt file. Enter floats only. Ensure file is within folder of .py file.")
+    print("Please list them in the order they are listed at the top of the file, i.e. \n Thrust=___ \n Chamber Pressure=___ \n . \n . \n .")
+    
     file_ext = input("Enter file path with .txt: ")
-
     input_vars = dict()
     try:
         with open(file_ext) as f:
             for line in f:
-                equal_index = line.find('=')
+                equal_index = line.find("=")
                 name = line[:equal_index].strip()
                 value = float(line[equal_index+1:].strip())
                 input_vars[name] = value
     except IOError:
-        print('Please ensure input.txt is named correctly and in the correct depository')
+        print("Please ensure input.txt is named correctly and in the correct directory.")
     except ValueError:
-        print('Please ensure inputs are entered as floats with no other text in the file')
+        print("Please ensure inputs are entered as floats with no other text in the file")
     input_vars["frozen"] = "frozen nfz=1" if bool(input_vars["frozen"]) else "equilibrium"
     ceagui_inp()
 
@@ -106,6 +116,7 @@ def get_exit_pressure(h: int or float):
         T = 15.04 - 0.00649 * h
         P3 = (101.29 * ((T + 273.1) / 288.08) ** (5.256))*1000
     return P3
+
 
 def ceagui_inp():
     p3 = get_exit_pressure(input_vars["altitude"])
@@ -138,11 +149,13 @@ def ceagui_inp():
         print(f"Operation complete. {ceagui_name}.inp saved to {cea_exe_dir}")
         driver_cea()
 
+
 def type_with_delay(dir_name: str, delay: int or float):
     print(f"EXECUTING {dir_name}")
     time.sleep(delay)
     pyautogui.typewrite(dir_name)
     pyautogui.press("enter")
+
 
 def driver_cea():
     t1 = threading.Thread(target=type_with_delay, args=(ceagui_name, 0.25), daemon=True)
@@ -152,13 +165,14 @@ def driver_cea():
     print(f"Operation complete. {ceagui_name}.out saved to {cea_exe_dir}")
     cea_outparse()
 
+
 def cea_outparse():
     global cea_filename
     csv_filename = f"{ceagui_name}.csv"
     cea_filename = f"{ceagui_name}.out"
     delimiter = "THEORETICAL ROCKET PERFORMANCE"
-    with open(cea_exe_dir + csv_filename, mode='w', newline="") as csv_f:
-        with open(cea_exe_dir + cea_filename, mode='r') as cea_f:
+    with open(cea_exe_dir + csv_filename, mode="w", newline="") as csv_f:
+        with open(cea_exe_dir + cea_filename, mode="r") as cea_f:
             cea_lines = cea_f.readlines()
             file_writer = csv.writer(csv_f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             row = ["O/F", "P0 (BAR)", "P1 (BAR)", "T0 (K)", "M (1/n)", "GAMMA", "CSTAR (M/SEC)", "ISP (M/SEC)"]
@@ -191,7 +205,8 @@ def cea_outparse():
                     vals.append(temp[2])
         file_writer.writerow(vals)
     print("Operation complete. CSV file saved to {}".format(csv_filename))
-    #calculate()
+    # calculate()
+
 
 def calculate():
     """
@@ -202,7 +217,7 @@ def calculate():
     with open(cea_filename) as f:
         for line in f:
             print(line)
-            colon_index = line.find(':')
+            colon_index = line.find(":")
             value = float(line[colon_index + 1:])
             cea_outputs.append(value)
     F = cea_outputs[0]
@@ -238,10 +253,10 @@ def calculate():
         Ldn = ((Re) - (Rt)) / (np.tan(np.deg2rad(15)))
         Lcn = ((Rc) - (Rt)) / (np.tan(np.deg2rad(45)))
 
-
     except (ValueError, ZeroDivisionError):  # Exception thrown
         print("\n", "Error while attempting to solve. Please enter a valid value"
               " for every parameter.")
+
 
 if __name__ == "__main__":
     input_variables()
