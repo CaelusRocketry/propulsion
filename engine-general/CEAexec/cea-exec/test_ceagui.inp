@@ -1,4 +1,4 @@
-problem  case=smthn_ceagui o/f=4.0,
+problem  case=test_ceagui o/f=4.0,
       rocket  frozen nfz=1
   p,bar=20.0,
   pi/p=19.724,
