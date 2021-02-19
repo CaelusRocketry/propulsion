@@ -77,24 +77,25 @@ cea_exe_dir = "./CEAexec/cea-exec/"
 
 # Input non-CEAgui vars from text file
 def input_variables():
-    global file_ext, input_vars
+    global file_name, vars
     print("Input variables using a .txt file. Enter floats only. Ensure file is within folder of .py file.")
     print("Please list them in the order they are listed at the top of the file, i.e. \n Thrust=___ \n Chamber Pressure=___ \n . \n . \n .")
     
     file_ext = input("Enter file path with .txt: ")
-    input_vars = dict()
+    file_name = file_ext.split(".")[0]
+    vars = dict()
     try:
         with open(file_ext) as f:
             for line in f:
                 equal_index = line.find("=")
                 name = line[:equal_index].strip()
                 value = float(line[equal_index+1:].strip())
-                input_vars[name] = value
+                vars[name] = value
     except IOError:
         print("Please ensure input.txt is named correctly and in the correct directory.")
     except ValueError:
         print("Please ensure inputs are entered as floats with no other text in the file")
-    input_vars["frozen"] = "frozen nfz=1" if bool(input_vars["frozen"]) else "equilibrium"
+    vars["frozen"] = "frozen nfz=1" if bool(vars["frozen"]) else "equilibrium"
     ceagui_inp()
 
 
@@ -119,35 +120,33 @@ def get_exit_pressure(h: int or float):
 
 
 def ceagui_inp():
-    p3 = get_exit_pressure(input_vars["altitude"])
-    pressure_ratio = round(input_vars["p0"]*100000 / p3, 3)
+    vars["p3"] = get_exit_pressure(vars["altitude"])
+    pressure_ratio = round(vars["p0"] / vars["p3"], 3)
 
     # Make the file
-    global ceagui_name
-    file_name = file_ext.split(".")[0]
     ceagui_name = file_name + "_ceagui"
     with open(cea_exe_dir + ceagui_name + ".inp", "w+") as f:
-        line_1 = f"problem  case={ceagui_name} o/f={input_vars['o/f']},\n"
+        line_1 = f"problem  case={ceagui_name} o/f={vars['o/f']},\n"
         f.write(line_1)
-        line_2 = f"      rocket  {input_vars['frozen']}\n"
+        line_2 = f"      rocket  {vars['frozen']}\n"
         f.write(line_2)
-        line_3 = f"  p,bar={input_vars['p0']},\n"
+        line_3 = f"  p,bar={vars['p0']/100000},\n"
         f.write(line_3)
         line_4 = f"  pi/p={pressure_ratio},\n"
         f.write(line_4)
         line_5 = "react\n"
         f.write(line_5)
-        line_6 = f"  fuel=C2H5OH(L) wt=95  t,k={input_vars['temp']}\n"
+        line_6 = f"  fuel=C2H5OH(L) wt=95  t,k={vars['temp']}\n"
         f.write(line_6)
-        line_7 = f"  fuel=H2O(L) wt=5  t,k={input_vars['temp']}\n"
+        line_7 = f"  fuel=H2O(L) wt=5  t,k={vars['temp']}\n"
         f.write(line_7)
-        line_8 = f"  oxid=N2O wt=100  t,k={input_vars['temp']}\n"
+        line_8 = f"  oxid=N2O wt=100  t,k={vars['temp']}\n"
         f.write(line_8)
         line_9 = "end"
         f.write(line_9)
         f.close()
         print(f"Operation complete. {ceagui_name}.inp saved to {cea_exe_dir}")
-        driver_cea()
+        
 
 
 def type_with_delay(dir_name: str, delay: int or float):
@@ -158,16 +157,17 @@ def type_with_delay(dir_name: str, delay: int or float):
 
 
 def driver_cea():
+    ceagui_name = file_name + "_ceagui"
     t1 = threading.Thread(target=type_with_delay, args=(ceagui_name, 0.25), daemon=True)
     t1.start()
     subprocess.call([cea_exe_dir + "FCEA2m.exe"],  cwd = cea_exe_dir)
     t1.join()
     print(f"Operation complete. {ceagui_name}.out saved to {cea_exe_dir}")
-    cea_outparse()
+   
 
 
 def cea_outparse():
-    global cea_filename
+    ceagui_name = file_name + "_ceagui"
     csv_filename = f"{ceagui_name}.csv"
     cea_filename = f"{ceagui_name}.out"
     delimiter = "THEORETICAL ROCKET PERFORMANCE"
@@ -204,8 +204,12 @@ def cea_outparse():
                     temp = line.split()
                     vals.append(temp[2])
         file_writer.writerow(vals)
+        i = 4
+        while i < 8:
+            vars[row[i].split()[0]] = float(vals[i]) 
+            i += 1
     print("Operation complete. CSV file saved to {}".format(csv_filename))
-    # calculate()
+    print(vars)
 
 
 def calculate():
@@ -220,11 +224,11 @@ def calculate():
             colon_index = line.find(":")
             value = float(line[colon_index + 1:])
             cea_outputs.append(value)
-    F = cea_outputs[0]
-    P0 = cea_outputs[1]
-    ALT = cea_outputs[2]
-    OF = cea_outputs[3]
-    T0 = cea_outputs[4]
+    F = vars["Thrust"]
+    P0 = vars["P0"]
+    ALT = vars["altitude"]
+    OF = vars["o/f"]
+    T0 = vars["temp"]
     M = cea_outputs[5]
     k = cea_outputs[6]
     Lstar = cea_outputs[7]
@@ -260,3 +264,6 @@ def calculate():
 
 if __name__ == "__main__":
     input_variables()
+    driver_cea()
+    cea_outparse()
+

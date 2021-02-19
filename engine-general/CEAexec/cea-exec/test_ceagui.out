@@ -9,7 +9,7 @@
 
 
 
- problem  case=smthn_ceagui o/f=4.0,
+ problem  case=test_ceagui o/f=4.0,
        rocket  frozen nfz=1
    p,bar=20.0,
    pi/p=19.724,
@@ -127,7 +127,7 @@
            THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
 
  Pin =   290.1 PSIA
- CASE = smthn_ceagui   
+ CASE = test_ceagui    
 
              REACTANT                    WT FRACTION      ENERGY      TEMP
                                           (SEE NOTE)     KJ/KG-MOL      K  
