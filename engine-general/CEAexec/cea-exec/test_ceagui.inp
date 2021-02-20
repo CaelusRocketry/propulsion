@@ -1,7 +1,7 @@
 problem  case=test_ceagui o/f=4.0,
-      rocket  frozen nfz=1
-  p,bar=20.0,
-  pi/p=19.724,
+      rocket  equilibrium
+  p,bar=30.0,
+  pi/p=31.4,
 react
   fuel=C2H5OH(L) wt=95  t,k=298.0
   fuel=H2O(L) wt=5  t,k=298.0

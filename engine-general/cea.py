@@ -96,7 +96,6 @@ def input_variables():
     except ValueError:
         print("Please ensure inputs are entered as floats with no other text in the file")
     vars["frozen"] = "frozen nfz=1" if bool(vars["frozen"]) else "equilibrium"
-    ceagui_inp()
 
 
 def get_exit_pressure(h: int or float):
@@ -120,8 +119,8 @@ def get_exit_pressure(h: int or float):
 
 
 def ceagui_inp():
-    vars["p3"] = get_exit_pressure(vars["altitude"])
-    pressure_ratio = round(vars["p0"] / vars["p3"], 3)
+    vars["P3"] = get_exit_pressure(vars["altitude"])
+    pressure_ratio = round(vars["P0"] / vars["P3"], 3)
 
     # Make the file
     ceagui_name = file_name + "_ceagui"
@@ -130,7 +129,7 @@ def ceagui_inp():
         f.write(line_1)
         line_2 = f"      rocket  {vars['frozen']}\n"
         f.write(line_2)
-        line_3 = f"  p,bar={vars['p0']/100000},\n"
+        line_3 = f"  p,bar={vars['P0']/100000},\n"
         f.write(line_3)
         line_4 = f"  pi/p={pressure_ratio},\n"
         f.write(line_4)
@@ -204,66 +203,36 @@ def cea_outparse():
                     temp = line.split()
                     vals.append(temp[2])
         file_writer.writerow(vals)
-        i = 4
+        i = 3
         while i < 8:
             vars[row[i].split()[0]] = float(vals[i]) 
             i += 1
     print("Operation complete. CSV file saved to {}".format(csv_filename))
     print(vars)
 
+def print_outputs():
+    pass
 
-def calculate():
+
+def print_header(string, key=lambda: 30):
     """
-    Attempts to calculate and print values.
+    Provides an easy way to print out a header.
+    :param string: The header as a string.
+    :param key: Length of the message.
     """
-    global cea_outputs
-    cea_outputs= []
-    with open(cea_filename) as f:
-        for line in f:
-            print(line)
-            colon_index = line.find(":")
-            value = float(line[colon_index + 1:])
-            cea_outputs.append(value)
-    F = vars["Thrust"]
-    P0 = vars["P0"]
-    ALT = vars["altitude"]
-    OF = vars["o/f"]
-    T0 = vars["temp"]
-    M = cea_outputs[5]
-    k = cea_outputs[6]
-    Lstar = cea_outputs[7]
+    print("\n")
+    print((len(string) % 2)*'-' + '{:-^{width}}'.format(string, width=key()))
 
-    try:  # Attempt to calculate values
-        R = (8314.3 / M)
-        PR = (P3 / P0)
-        AR = (((k + 1) / 2) ** (1 / (k - 1))) * ((P3 / P0) ** (1 / k)) * (
-            np.sqrt(((k + 1) / (k - 1)) * (1 - ((P3 / P0) ** ((k - 1) / k)))))
-        ER = 1 / AR
-        Tt = (2 * T0) / (k + 1)
-        v2 = np.sqrt((2 * k / (k - 1)) * ((R) * T0) * (1 - ((P3 / P0) ** ((k - 1) / k))))
-        mdot = F / v2
-        mdot_fuel = (mdot / (OF + 1))
-        mdot_oxidizer = (mdot / (OF + 1)) * OF
-        Isp = F / (mdot * 9.80655)
-        Te = T0 / ((P0 / P3) ** ((k - 1) / k))
-        Mnum = (v2 / (np.sqrt(k * (R) * (Te))))
-        At = ((mdot) * (np.sqrt((k * R * T0)))) / (k * P0 * (np.sqrt(((2 / (k + 1)) ** ((k + 1) / (k - 1))))))
-        Ae = ER * At
-        Rt = np.sqrt(At / np.pi)
-        Re = np.sqrt(Ae / np.pi)
-        Ac = Ae
-        Rc = np.sqrt((Ac) / np.pi)
-        Lc = ((At) * Lstar) / (Ac)
-        Ldn = ((Re) - (Rt)) / (np.tan(np.deg2rad(15)))
-        Lcn = ((Rc) - (Rt)) / (np.tan(np.deg2rad(45)))
 
-    except (ValueError, ZeroDivisionError):  # Exception thrown
-        print("\n", "Error while attempting to solve. Please enter a valid value"
-              " for every parameter.")
-
+def cea_main(v):
+    global vars = v
+    ceagui_inp()
+    driver_cea()
+    return vars
 
 if __name__ == "__main__":
     input_variables()
+    ceagui_inp()
     driver_cea()
     cea_outparse()
-
+    print_outputs()

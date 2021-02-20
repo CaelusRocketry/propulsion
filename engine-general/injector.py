@@ -1,5 +1,5 @@
 
-"""
+""" 
 -------------------------------------------------------------------------------------
 ALL CALCULATIONS ARE DONE IN STANDARD IMPERIAL (SI) UNITS, WITH TEMPERATURE IN KELVIN.
 ANGLES IN DEGREES.
@@ -221,6 +221,11 @@ def calculate():
     except (ValueError, ZeroDivisionError):  # Exception thrown
         print("\n", "Error while attempting to solve. Please enter a valid value"
               " for every parameter.")
+
+def injector_main(a,b):
+    pass
+
+
 
 if __name__ == "__main__":
     prompt()

@@ -69,10 +69,22 @@ OUTPUTS:
 """
 
 # Imports
-from math import sqrt, tan, radians, degrees, pi, exp
+import numpy as np
+
+def process_input_vars(vars):
+    global F, P0, ALT, P3, OF, T0, M, k, Lstar
+    F = vars["thrust"]
+    P0 = vars["P0"]
+    ALT = vars["altitude"]
+    P3 = exit_pressure(ALT)
+    OF = vars["o/f"]
+    T0 = vars["T0"]
+    M = vars["M"]
+    k = vars["GAMMA"]
+    Lstar = vars['Lstar']
 
 
-def prompt():
+def input_variables():
     global outarray
     print("\n ----------------------------------------------------------------------",
           "\n", "Take parameters through keyboard inputs or from text file (input.txt)?",
@@ -144,7 +156,7 @@ def calc_readings():
     M = take_input("Gas molecular mass (kg/mol): ")
     k = take_input("Ratio of specific heats (cp/cv): ")
     Lstar = take_input("Characteristic chamber length (L*, in meters): ")
-    exit_pressure(ALT)
+    get_exit_pressure(ALT)
     calculate()
 
 def calc_text():
@@ -155,7 +167,7 @@ def calc_text():
     F = outarray[0]
     P0 = outarray[1]
     ALT = outarray[2]
-    exit_pressure(ALT)
+    P3 = get_exit_pressure(ALT)
     OF = outarray[3]
     T0 = outarray[4]
     M = outarray[5]
@@ -163,23 +175,23 @@ def calc_text():
     Lstar = outarray[7]
     calculate()
 
-def exit_pressure(h):
+def get_exit_pressure(h: int or float):
     """
     Sourced from NASA Glenn Research Center's Earth Atmosphere Model.
     Computes and sets the ambient pressure, P3, based on inputted altitude (meters).
     P3 has units in pascals. Note: The intermediate temperature calculations use Celsius.
     :param h: Altitude, in meters.
     """
-    global P3
     if (h >= 25000):  # Upper Stratosphere
         T = -131.21 + 0.00299 * h
         P3 = (2.488 * ((T + 273.1) / 216.6) ** (-11.388))*1000
     elif (11000 < h < 25000):  # Lower Stratosphere
         T = -56.46
-        P3 = (22.65 * exp(1.73 - 0.000157 * h))*1000
+        P3 = (22.65 * np.exp(1.73 - 0.000157 * h))*1000
     else: # Troposphere
         T = 15.04 - 0.00649 * h
         P3 = (101.29 * ((T + 273.1) / 288.08) ** (5.256))*1000
+    return P3
 
 def calculate():
     """
@@ -189,62 +201,90 @@ def calculate():
         R = (8314.3 / M)
         PR = (P3 / P0)
         AR = (((k + 1) / 2) ** (1 / (k - 1))) * ((P3 / P0) ** (1 / k)) * (
-            sqrt(((k + 1) / (k - 1)) * (1 - ((P3 / P0) ** ((k - 1) / k)))))
+            np.sqrt(((k + 1) / (k - 1)) * (1 - ((P3 / P0) ** ((k - 1) / k)))))
         ER = 1 / AR
         Tt = (2 * T0) / (k + 1)
-        v2 = sqrt((2 * k / (k - 1)) * ((R) * T0) * (1 - ((P3 / P0) ** ((k - 1) / k))))
+        v2 = np.sqrt((2 * k / (k - 1)) * ((R) * T0) * (1 - ((P3 / P0) ** ((k - 1) / k))))
         mdot = F / v2
         mdot_fuel = (mdot / (OF + 1))
         mdot_oxidizer = (mdot / (OF + 1)) * OF
         Isp = F / (mdot * 9.80655)
         Te = T0 / ((P0 / P3) ** ((k - 1) / k))
-        Mnum = (v2 / (sqrt(k * (R) * (Te))))
-        At = ((mdot) * (sqrt((k * R * T0)))) / (k * P0 * (sqrt(((2 / (k + 1)) ** ((k + 1) / (k - 1))))))
+        Mnum = (v2 / (np.sqrt(k * (R) * (Te))))
+        At = ((mdot) * (np.sqrt((k * R * T0)))) / (k * P0 * (np.sqrt(((2 / (k + 1)) ** ((k + 1) / (k - 1))))))
         Ae = ER * At
-        Rt = sqrt(At / pi)
-        Re = sqrt(Ae / pi)
+        Rt = np.sqrt(At / np.pi)
+        Re = np.sqrt(Ae / np.pi)
         Ac = At * 8
-        Rc = sqrt((Ac) / pi)
+        Rc = np.sqrt((Ac) / np.pi)
         Lc = ((At) * Lstar) / (Ac)
-        Ldn = ((Re) - (Rt)) / (tan(radians(15)))
-        Lcn = ((Rc) - (Rt)) / (tan(radians(45)))
+        Ldn = ((Re) - (Rt)) / (np.tan(np.deg2rad(15)))
+        Lcn = ((Rc) - (Rt)) / (np.tan(np.deg2rad(45)))
 
-        print_header("INPUTS")
-        print("Thrust: ", F, "N")
-        print("Chamber pressure: ", P0, "Pa")
-        print("Altitude: ", ALT, "m")
-        print("Ambient pressure: ", P3, "Pa")
-        print("O/F ratio:", OF)
-        print("Combustion temperature:", T0, "K")
-        print("Molecular mass:", M, "kg/mol")
-        print("Gamma:", k)
-        print("Characteristic chamber length:", Lstar, "m")
-
-        print_header("OUTPUTS")
-        print("Specific impulse (at altitude): ", "%.4f" % Isp, "sec")
-        print("Throat temperature: ", "%.4f" % Tt, "K")
-        print("Effective exhaust velocity: ", "%.4f" % v2, "m/sec")
-        print("Mass flow rate: ", "%.4f" % mdot, "kg/sec")
-        print("Mass flow rate (oxidizer): ", "%.4f" % mdot_oxidizer, "kg/sec")
-        print("Mass flow rate (fuel): ", "%.4f" % mdot_fuel, "kg/sec")
-        print("Exit temperature: ", "%.4f" % Te, "K")
-        print("Exit Mach number: ", "%.4f" % Mnum)
-        print("Pressure ratio: ", "%.4f" % PR)
-        print("Expansion ratio: ", "%.4f" % ER)
-
-        print_header("NOZZLE DIMENSIONS")
-        print("Area of the throat: ", "%.7f" % At, "m^2")
-        print("Area of the exit: ", "%.7f" % Ae, "m^2")
-        print("Throat radius: ", "%.7f" % Rt, "m")
-        print("Exit radius: ", "%.7f" % Re, "m")
-        print("Chamber radius: ", "%.7f" % Rc, "m")
-        print("Chamber length: ", "%.7f" % Lc, "m")
-        print("Length of the diverging nozzle: ", "%.7f" % Ldn, "m")
-        print("Length of the converging nozzle: ", "%.7f" % Lcn, "m")
+        vars["R"] = R
+        vars["PR"] = PR
+        vars["AR"] = AR
+        vars["ER"] = ER
+        vars["Tt"] = Tt
+        vars["v2"] = v2
+        vars["mdot"] = mdot
+        vars["mdot_fuel"] = mdot_fuel
+        vars["mdot_oxidizer"] = mdot_oxidizer
+        vars["Isp"] = Isp
+        vars["Te"] = Te
+        vars["Mnum"] = Mnum
+        vars["At"] = At
+        vars["Ae"] = Ae
+        vars["Rt"] = Rt
+        vars["Re"] = Re
+        vars["Ac"] = Ac
+        vars["Rc"] = Rc
+        vars["Lc"] = Lc
+        vars["Ldn"] = Ldn
+        vars["Lcn"] = Lcn
 
     except (ValueError, ZeroDivisionError):  # Exception thrown
-        print("\n", "Error while attempting to solve. Please enter a valid value"
-              " for every parameter.")
+        print("\n", "Error while attempting to solve. Please enter a valid value for every parameter.")
 
-if __name__ == "__main__":
-    prompt()
+def print_outputs():
+    print_header("INPUTS")
+    print("Thrust: ", F, "N")
+    print("Chamber pressure: ", P0, "Pa")
+    print("Altitude: ", ALT, "m")
+    print("Ambient pressure: ", P3, "Pa")
+    print("O/F ratio:", OF)
+    print("Combustion temperature:", T0, "K")
+    print("Molecular mass:", M, "kg/mol")
+    print("Gamma:", k)
+    print("Characteristic chamber length:", Lstar, "m")
+
+    print_header("OUTPUTS")
+    print("Specific impulse (at altitude): ", "%.4f" % Isp, "sec")
+    print("Throat temperature: ", "%.4f" % Tt, "K")
+    print("Effective exhaust velocity: ", "%.4f" % v2, "m/sec")
+    print("Mass flow rate: ", "%.4f" % mdot, "kg/sec")
+    print("Mass flow rate (oxidizer): ", "%.4f" % mdot_oxidizer, "kg/sec")
+    print("Mass flow rate (fuel): ", "%.4f" % mdot_fuel, "kg/sec")
+    print("Exit temperature: ", "%.4f" % Te, "K")
+    print("Exit Mach number: ", "%.4f" % Mnum)
+    print("Pressure ratio: ", "%.4f" % PR)
+    print("Expansion ratio: ", "%.4f" % ER)
+
+    print_header("NOZZLE DIMENSIONS")
+    print("Area of the throat: ", "%.7f" % At, "m^2")
+    print("Area of the exit: ", "%.7f" % Ae, "m^2")
+    print("Throat radius: ", "%.7f" % Rt, "m")
+    print("Exit radius: ", "%.7f" % Re, "m")
+    print("Chamber radius: ", "%.7f" % Rc, "m")
+    print("Chamber length: ", "%.7f" % Lc, "m")
+    print("Length of the diverging nozzle: ", "%.7f" % Ldn, "m")
+    print("Length of the converging nozzle: ", "%.7f" % Lcn, "m")
+
+
+
+def nozzle_main(vars):
+    process_input_vars()
+
+
+# if __name__ == "__main__":
+    # prompt()
