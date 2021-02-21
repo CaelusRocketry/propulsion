@@ -1,6 +1,52 @@
+"""
+INPUTS:
+    CEAgui
+ 
+    Nozzle Calc
+
+    Injector
+        
+OUTPUTS:
+    Nozzle & General Engine Parameters
+        - Isp = Specific impulse at altitude, sec
+        - Tt = Throat temperature, K
+        - v2 = Effective exhaust velocity, m/sec
+        - mdot = Mass flow rate, kg/sec
+        - mdot_oxidizer = Mass flow rate of the oxidizer, kg/sec
+        - mdot_fuel = Mass flow rate of the fuel, kg/sec
+        - PR = Pressure ratio, dimensionless
+        - ER = Expansion ratio, dimensionless
+        - Te = Exit temperature, K
+        - Mnum = Exit Mach number, dimensionless
+        - At = Area of the throat, m^2
+        - Ae = Area of the exit, m^2
+        - Rt = Radius of the throat, m
+        - Re = Radius of the exit, m
+        - Rc = Radius of the chamber, m
+        - Lc = Length of the chamber, m
+        - Ldn = Length of the diverging nozzle, m
+        - Lcn = Length of the converging nozzle, m
+    New
+        - Initial fuel mass
+        - Initial oxidizer mass
+        - Volumetric fuel flow rate
+        - Volumetric oxidizer flow rate
+        - System pressure drop (?)
+        - Initial ethanol np.tank pressure
+        - Initial nitrous np.tank pressure
+"""
+
+
+
+
+
+
+
+
 from cea import cea_main
 from nozzle import nozzle_main
 from injector import injector_main
+from cea import get_exit_pressure
 # from propsim import propsim_main
 
 def take_all_inputs():
@@ -21,8 +67,9 @@ def take_all_inputs():
         print("Please ensure input.txt is named correctly and in the correct directory.")
     except ValueError:
         print("Please ensure inputs are entered as floats with no other text in the file")
-    vars["frozen"] = "frozen nfz=1" if bool(vars["frozen"]) else "equilibrium"
-    return vars
+    vars["P3"] = get_exit_pressure(vars[altitude])
+    ceagui_name = file_name + "_ceagui"
+    return vars, ceagui_name
 
 
 def print_header(string, key=lambda: 30):
@@ -36,7 +83,12 @@ def print_header(string, key=lambda: 30):
 
 
 if __name__ == "__main__":
-    vars = take_all_inputs()
-    cea_vars = cea_main(vars)
-    nozzle_vars = nozzle_main(vars, cea_vars)
-    injector_vars = injector_main(vars, cea_vars, nozzle_vars)
+    temp = take_all_inputs()
+    vars = temp[0]
+    ceagui_name = temp[1]
+    cea_vars = cea_main(vars, ceagui_name)
+    nozzle_vars = nozzle_main(cea_vars)
+    injector_vars = injector_main(nozzle_vars)
+    for key in injector_vars:
+        print(f"{key} = {injector_vars}")
+#TODO format outputs
