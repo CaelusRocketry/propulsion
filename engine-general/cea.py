@@ -115,7 +115,7 @@ def driver_cea(ceagui_name):
    
 
 
-def cea_outparse(ceagui_name):
+def cea_outparse(ceagui_name, vars):
     cea_exe_dir = "./CEAexec/cea-exec/"
     csv_filename = f"{ceagui_name}.csv"
     cea_filename = f"{ceagui_name}.out"
@@ -158,6 +158,7 @@ def cea_outparse(ceagui_name):
             vars[row[i].split()[0]] = float(vals[i]) 
             i += 1
     print("Operation complete. CSV file saved to {}".format(csv_filename))
+    return vars
 
 def print_outputs(vars):
     for key in vars:
@@ -166,11 +167,10 @@ def print_outputs(vars):
 
 
 def cea_main(vars, ceagui_name):
-    py_dir = os.path.dirname(__file__)
-    os.chdir(py_dir)
     ceagui_inp(vars, ceagui_name)
     driver_cea(ceagui_name)
-    cea_outparse(ceagui_name)
+    vars = cea_outparse(ceagui_name, vars)
+    return vars
 
 if __name__ == "__main__":
     py_dir = os.path.dirname(__file__)
@@ -180,5 +180,5 @@ if __name__ == "__main__":
     ceagui_name = temp[1]
     ceagui_inp(vars, ceagui_name)
     driver_cea(ceagui_name)
-    cea_outparse(ceagui_name)
+    cea_outparse(ceagui_name, vars)
     print_outputs(vars)

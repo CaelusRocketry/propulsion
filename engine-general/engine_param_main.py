@@ -47,6 +47,7 @@ from cea import cea_main
 from nozzle import nozzle_main
 from injector import injector_main
 from cea import get_exit_pressure
+import os
 # from propsim import propsim_main
 
 def take_all_inputs():
@@ -83,12 +84,14 @@ def print_header(string, key=lambda: 30):
 
 
 if __name__ == "__main__":
+    py_dir = os.path.dirname(__file__)
+    os.chdir(py_dir)
     temp = take_all_inputs()
     vars = temp[0]
     ceagui_name = temp[1]
-    cea_vars = cea_main(vars, ceagui_name)
-    nozzle_vars = nozzle_main(cea_vars)
-    injector_vars = injector_main(nozzle_vars)
-    for key in injector_vars:
-        print(f"{key} = {injector_vars}")
+    cea_main(vars, ceagui_name)
+    nozzle_main(vars)
+    injector_main(vars)
+    for key in vars:
+        print(f"{key} = {vars[key]}")
 #TODO format outputs

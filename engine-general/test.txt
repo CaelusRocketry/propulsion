@@ -4,6 +4,7 @@ P0 = 3000000
 altitude = 500
 temp = 298
 thrust = 3000
+T0 = 3000
 Lstar = 1.25
 rho_f = 789
 rho_o = 772.75

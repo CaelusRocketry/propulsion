@@ -70,6 +70,7 @@ OUTPUTS:
 
 # Imports
 import numpy as np
+import os
 
 
 
@@ -90,6 +91,7 @@ def input_variables():
         print("Please ensure input.txt is named correctly and in the correct directory.")
     except ValueError:
         print("Please ensure inputs are entered as floats with no other text in the file")
+    print(vars)
     vars["P3"] = get_exit_pressure(vars["altitude"])
     return vars
 
@@ -189,6 +191,8 @@ def nozzle_main(vars):
 
 
 if __name__ == "__main__":
+    py_dir = os.path.dirname(__file__)
+    os.chdir(py_dir)
     vars = input_variables()
     calculate(vars)
     print_outputs(vars)
