@@ -71,109 +71,27 @@ OUTPUTS:
 # Imports
 import numpy as np
 
-def process_input_vars(vars):
-    global F, P0, ALT, P3, OF, T0, M, k, Lstar
-    F = vars["thrust"]
-    P0 = vars["P0"]
-    ALT = vars["altitude"]
-    P3 = exit_pressure(ALT)
-    OF = vars["o/f"]
-    T0 = vars["T0"]
-    M = vars["M"]
-    k = vars["GAMMA"]
-    Lstar = vars['Lstar']
 
 
 def input_variables():
-    global outarray
-    print("\n ----------------------------------------------------------------------",
-          "\n", "Take parameters through keyboard inputs or from text file (input.txt)?",
-          "\n ----------------------------------------------------------------------")
-    prompt = input("Enter INPUT or FILE: ")
-    if(prompt == ("INPUT")):
-        print("\n")
-        calc_readings()
-    elif(prompt == ("FILE")):
-        outarray = []
-        try:
-            with open("input.txt") as file:
-                line = file.readline().strip()
-                while line:
-                    count = 0
-                    for char in line:
-                        if char == (":"):
-                            out = line[count+1:]
-                            outarray.append(float(out))
-                            break
-                        count += 1
-                    line = file.readline().strip()
-            file.close()
-            calc_text()
-        except IOError:
-            print("\n", "Error reading file. Please make sure input.txt exists in the"
-                  " correct directory.")
-        except ValueError:
-            print("\n", "Error while attempting to solve. Please make sure every input"
-                        " is a numeric value and/or has inputs.")
-    else:
-        print("\n", "Invalid! Please enter INPUT or FILE to select your desired"
-              " input method.")
-
-
-def take_input(s):
-    """
-    Prompt input from user.
-    :param s: The message to display to the user.
-    :return: The user's input as a `float`.
-    """
+    print("Input variables using a .txt file. Enter floats only. Ensure file is within folder of .py file.")
+    print("Please list them in the order they are listed at the top of the file, i.e. \n Thrust=___ \n Chamber Pressure=___ \n . \n . \n .")
+    
+    file_ext = input("Enter file path with .txt: ")
+    vars = dict()
     try:
-        return float(input(s))
+        with open(file_ext) as f:
+            for line in f:
+                equal_index = line.find("=")
+                name = line[:equal_index].strip()
+                value = float(line[equal_index+1:].strip())
+                vars[name] = value
+    except IOError:
+        print("Please ensure input.txt is named correctly and in the correct directory.")
     except ValueError:
-        print("\n", "Please make sure every input is a numeric value.")
-        exit(0)
-
-
-def print_header(string, key=lambda: 30):
-    """
-    Provides an easy way to print out a header.
-    :param string: The header as a string.
-    :param key: Length of the message.
-    """
-    print("\n")
-    print((len(string) % 2)*'-' + '{:-^{width}}'.format(string, width=key()))
-
-
-def calc_readings():
-    """
-    Defines user parameters from user input and calls a calculation.
-    """
-    global F, P0, ALT, OF, T0, M, k, Lstar
-    F = take_input("Desired thrust (N): ")
-    P0 = take_input("Chamber pressure (Pa): ")
-    ALT = take_input("Altitude (m): ")
-    OF = take_input("Oxidizer to fuel ratio: ")
-    T0 = take_input("Combustion chamber temperature (K): ")
-    M = take_input("Gas molecular mass (kg/mol): ")
-    k = take_input("Ratio of specific heats (cp/cv): ")
-    Lstar = take_input("Characteristic chamber length (L*, in meters): ")
-    get_exit_pressure(ALT)
-    calculate()
-
-def calc_text():
-    """
-    Defines user parameters from text file and calls a calculation.
-    """
-    global F, P0, ALT, P3, OF, T0, M, k, Lstar
-    F = outarray[0]
-    P0 = outarray[1]
-    ALT = outarray[2]
-    P3 = get_exit_pressure(ALT)
-    OF = outarray[3]
-    T0 = outarray[4]
-    M = outarray[5]
-    k = outarray[6]
-    Lstar = outarray[7]
-    calculate()
+        print("Please ensure inputs are entered as floats with no other text in the file")
+    vars["P3"] = get_exit_pressure(vars["altitude"])
+    return vars
 
 def get_exit_pressure(h: int or float):
     """
@@ -181,22 +99,36 @@ def get_exit_pressure(h: int or float):
     Computes and sets the ambient pressure, P3, based on inputted altitude (meters).
     P3 has units in pascals. Note: The intermediate temperature calculations use Celsius.
     :param h: Altitude, in meters.
+    :return P3: Ambient pressure at altitude, in pascals.
     """
     if (h >= 25000):  # Upper Stratosphere
         T = -131.21 + 0.00299 * h
         P3 = (2.488 * ((T + 273.1) / 216.6) ** (-11.388))*1000
     elif (11000 < h < 25000):  # Lower Stratosphere
         T = -56.46
-        P3 = (22.65 * np.exp(1.73 - 0.000157 * h))*1000
+        P3 = (22.65 * math.exp(1.73 - 0.000157 * h))*1000
     else: # Troposphere
         T = 15.04 - 0.00649 * h
         P3 = (101.29 * ((T + 273.1) / 288.08) ** (5.256))*1000
     return P3
 
-def calculate():
+
+
+
+def calculate(vars):
     """
     Attempts to calculate and print values.
     """
+    F = vars["thrust"]
+    P0 = vars["P0"]
+    ALT = vars["altitude"]
+    P3 = vars["P3"]
+    OF = vars["o/f"]
+    T0 = vars["T0"]
+    M = vars["M"]
+    k = vars["GAMMA"]
+    Lstar = vars['Lstar']
+
     try:  # Attempt to calculate values
         R = (8314.3 / M)
         PR = (P3 / P0)
@@ -246,45 +178,17 @@ def calculate():
     except (ValueError, ZeroDivisionError):  # Exception thrown
         print("\n", "Error while attempting to solve. Please enter a valid value for every parameter.")
 
-def print_outputs():
-    print_header("INPUTS")
-    print("Thrust: ", F, "N")
-    print("Chamber pressure: ", P0, "Pa")
-    print("Altitude: ", ALT, "m")
-    print("Ambient pressure: ", P3, "Pa")
-    print("O/F ratio:", OF)
-    print("Combustion temperature:", T0, "K")
-    print("Molecular mass:", M, "kg/mol")
-    print("Gamma:", k)
-    print("Characteristic chamber length:", Lstar, "m")
-
-    print_header("OUTPUTS")
-    print("Specific impulse (at altitude): ", "%.4f" % Isp, "sec")
-    print("Throat temperature: ", "%.4f" % Tt, "K")
-    print("Effective exhaust velocity: ", "%.4f" % v2, "m/sec")
-    print("Mass flow rate: ", "%.4f" % mdot, "kg/sec")
-    print("Mass flow rate (oxidizer): ", "%.4f" % mdot_oxidizer, "kg/sec")
-    print("Mass flow rate (fuel): ", "%.4f" % mdot_fuel, "kg/sec")
-    print("Exit temperature: ", "%.4f" % Te, "K")
-    print("Exit Mach number: ", "%.4f" % Mnum)
-    print("Pressure ratio: ", "%.4f" % PR)
-    print("Expansion ratio: ", "%.4f" % ER)
-
-    print_header("NOZZLE DIMENSIONS")
-    print("Area of the throat: ", "%.7f" % At, "m^2")
-    print("Area of the exit: ", "%.7f" % Ae, "m^2")
-    print("Throat radius: ", "%.7f" % Rt, "m")
-    print("Exit radius: ", "%.7f" % Re, "m")
-    print("Chamber radius: ", "%.7f" % Rc, "m")
-    print("Chamber length: ", "%.7f" % Lc, "m")
-    print("Length of the diverging nozzle: ", "%.7f" % Ldn, "m")
-    print("Length of the converging nozzle: ", "%.7f" % Lcn, "m")
-
+def print_outputs(vars):
+    for key in vars:
+        print(f"{key} = {vars["key"]}")
 
 
 def nozzle_main(vars):
-    process_input_vars()
+    calculate(vars)
 
 
-# if __name__ == "__main__":
-    # prompt()
+
+if __name__ == "__main__":
+    vars = input_variables()
+    calculate(vars)
+    print_outputs(vars)

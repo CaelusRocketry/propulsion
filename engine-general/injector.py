@@ -42,115 +42,50 @@ OUTPUTS:
 # Imports
 import numpy as np
 
-def prompt():
-    global outarray
-    print("\n ----------------------------------------------------------------------",
-          "\n", "Take parameters through keyboard inputs or from text file (input.txt)?",
-          "\n ----------------------------------------------------------------------")
-    prompt = input("Enter INPUT or FILE: ")
-    if(prompt == ("INPUT")):
-        print("\n")
-        calc_readings()
-    elif(prompt == ("FILE")):
-        outarray = []
-        try:
-            with open("input.txt") as file:
-                line = file.readline().strip()
-                while line:
-                    outarray.append(float(line.strip()))
-                    # count = 0
-                    # for char in line:
-                        # if char == (":"):
-                        #     out = line[count+1:]
-                        #     outarray.append(float(out))
-                        #     break
-                        # count += 1
-                    line = file.readline().strip()
-            file.close()
-            calc_text()
-        except IOError:
-            print("\n", "Error reading file. Please make sure input.txt exists in the"
-                  " correct directory.")
-        except ValueError:
-            print("\n", "Error while attempting to solve. Please make sure every input"
-                        " is a numeric value and/or has inputs.")
-    else:
-        print("\n", "Invalid! Please enter INPUT or FILE to select your desired"
-              " input method.")
-
-
-def take_input(s):
-    """
-    Prompt input from user.
-    :param s: The message to display to the user.
-    :return: The user's input as a `float`.
-    """
+def input_variables():
+    print("Input variables using a .txt file. Enter floats only. Ensure file is within folder of .py file.")
+    print("Please list them in the order they are listed at the top of the file, i.e. \n Thrust=___ \n Chamber Pressure=___ \n . \n . \n .")
+    
+    file_ext = input("Enter file path with .txt: ")
+    vars = dict()
     try:
-        return float(input(s))
+        with open(file_ext) as f:
+            for line in f:
+                equal_index = line.find("=")
+                name = line[:equal_index].strip()
+                value = float(line[equal_index+1:].strip())
+                vars[name] = value
+    except IOError:
+        print("Please ensure input.txt is named correctly and in the correct directory.")
     except ValueError:
-        print("\n", "Please make sure every input is a numeric value.")
-        exit(0)
+        print("Please ensure inputs are entered as floats with no other text in the file")
+    vars["P3"] = get_exit_pressure(vars["altitude"])
+    return vars
 
 
-def print_header(string, key=lambda: 30):
-    """
-    Provides an easy way to print out a header.
-    :param string: The header as a string.
-    :param key: Length of the message.
-    """
-    print("\n")
-    print((len(string) % 2)*'-' + '{:-^{width}}'.format(string, width=key()))
 
 
-def calc_readings():
-    """
-    Defines user parameters from user input and calls a calculation.
-    """
-
-    global mdot, mdot_o, mdot_f, OF, rho_f, rho_o, P0, delta_p, og_d_o, Cd_o, og_d_f, Cd_f, imp_angle
-    mdot = take_input("Mass flow rate (kg/sec): ")
-    OF = take_input("Oxidizer to fuel ratio: ")
-    mdot_o = mdot * OF/(OF+1)
-    mdot_f = mdot * 1/(OF+1)
-    rho_f = take_input("Fuel Density (kg/m^3): ")
-    rho_o = take_input("Oxidizer Density (kg/m^3): ")
-    P0 = take_input("Chamber Pressure (Pa): ")
-    delta_p = take_input("Pressure drop across injector (%): ")
-    og_d_o = take_input("Statrting diameter of oxidizer orifice (mm): ")
-    Cd_o = take_input("Discharge coefficient of oxidizer orifice: ")
-    og_d_f = take_input("Starting diameter of fuel orifice (mm): ")
-    Cd_f = take_input("Discharge coefficient of fuel orifice:  ")
-    imp_angle = take_input("Impingement angle (degrees): ")
-    calculate()
-
-def calc_text():
-    """
-    Defines user parameters from text file and calls a calculation.
-    """
-    global mdot, mdot_o, mdot_f, OF, rho_f, rho_o, P0, delta_p, og_d_o, Cd_o, og_d_f, Cd_f, imp_angle
-    mdot = outarray[0]
-    OF = outarray[1]
-    mdot_o = mdot * OF/(OF+1)
-    mdot_f = mdot * 1/(OF+1)
-    rho_f = outarray[2]
-    rho_o = outarray[3]
-    P0 = outarray[4]
-    delta_p = outarray[5]
-    og_d_o = outarray[6]
-    Cd_o = outarray[7]
-    og_d_f = outarray[8]
-    Cd_f = outarray[9]
-    imp_angle = outarray[10]
-    calculate()
-
-def calculate():
+def calculate(vars):
     """
     Attempts to calculate and print values.
     """
     try:  # Attempt to calculate values
-        M = 1.6
-        jet_LD = 6
-        orifice_LD = 7
+        mdot = vars["mdot"]
+        OF = vars["o/f"]
+        mdot_o = mdot * OF/(OF+1)
+        mdot_f = mdot * 1/(OF+1)
+        rho_f = vars["rho_f"]
+        rho_o = vars["rho_o"]
+        P0 = vars["P0"]
+        delta_p = vars["delta_p"]
+        og_d_o = vars["og_d_o"]
+        Cd_o = vars["Cd_o"]
+        og_d_f = vars["og_d_f"]
+        Cd_f = vars["Cd_f"]
+        imp_angle = vars["imp_angle"]
+        M = vars["M"]
+        jet_LD = vars["jet_LD"]
+        orifice_LD = vars["orifice_LD"]
 
         diam_ratio = np.sqrt(M * (((rho_o/rho_f)*(mdot_o/mdot_f)**2)**0.7))
         
@@ -172,7 +107,7 @@ def calculate():
         L_jet_o = jet_LD * d_o
         L_jet_f = jet_LD * d_f
 
-        print(imp_angle)
+
         L_poi_o = L_jet_o * np.cos(np.deg2rad(imp_angle/2))
         L_poi_f = L_jet_f * np.cos(np.deg2rad(imp_angle/2))
         
@@ -183,49 +118,37 @@ def calculate():
         d_man_f = (d_com_o/L_poi_o) * (L_inj + L_poi_o)
         d_man_o = (d_com_f/L_poi_f) * (L_inj + L_poi_f)
 
+        vars["diam_ratio"] = diam_ratio
+        vars["mdot_o_orifice"] = mdot_o_orifice
+        vars["mdot_f_orifice"] = mdot_f_orifice
+        vars["n_o"] = n_o
+        vars["n_f"] = n_f
+        vars["d_o"] = d_o
+        vars["d_f"] = d_f
+        vars["a_o"] = a_o
+        vars["a_f"] = a_f
+        vars["L_jet_o"] = L_jet_o
+        vars["L_jet_f"] = L_jet_f
+        vars["L_poi_o"] = L_poi_o
+        vars["L_poi_f"] = L_poi_f
+        vars["L_inj"] = L_inj
+        vars["d_com_f"] = d_com_f
+        vars["d_man_o"] = d_man_o
+        vars["d_man_f"] = d_man_f
+        vars["d_man_o"] = d_man_o
+        return vars
 
-        print_header("INPUTS")
-        print("Mass Flow Rate: ", mdot, "kg/sec")
-        print("O/F Ratio: ", OF)
-        print("Fuel Density: ", rho_f, "kg/m^3")
-        print("Oxidizer Density: ", rho_o, "kg/m^3")
-        print("Chamber Pressure: ", P0, "Pa")
-        print("Pressure Drop Across Injector: ", delta_p, "% of P0")
-        print("Starting Oxidizer Oririce Diameter: ", og_d_o, "mm")
-        print("Oxidizer Orifice Discharge Coefficient: ", Cd_o)
-        print("Starting Fuel Oririce Diameter: ", og_d_f, "mm")
-        print("Oxidizer Fuel Discharge Coefficient: ", Cd_f)
-        print("Impingement Angle: ", imp_angle, "deg")
 
-        print_header("OUTPUTS")
-        print("Injector plate thickness: ", L_inj, "mm")
+def print_out():
+    for key in vars:
+        print(f"{key} = {vars["key"]}")
 
-        print("\nOXIDIZER DATA:")
-        print("Number of oxidizer orifices: ", round(n_o, 3))
-        print("Diameter of oxidizer orifice:", round(d_o, 3), "mm")
-        print("Area of oxidizer orifice: ", round(a_o, 3), "mm^2")
-        print("Oxidizer jet length: ", round(L_jet_o, 3), "mm")
-        print("Oxidizer impingement distance: ", round(L_poi_o, 3), "mm")
-        print("Oxidizer orifice distance (combustor): ", round(d_com_o, 3), "mm")
-        print("Oxidizer orifice distance (manifold):", round(d_man_o, 3), "mm")
-
-        print("\nFUEL DATA:")
-        print("Number of fuel orifices: ", round(n_f, 3))
-        print("Diameter of fuel orifices: ", round(d_f, 3), "mm")
-        print("Area of fuel orifice: ", round(a_f, 3), "mm^2")
-        print("Fuel jet length: ", round(L_jet_f, 3), "mm")
-        print("Fuel point of impingement distance: ", round(L_poi_f, 3), "mm")
-        print("Fuel orifice distance (combustor): ", round(d_com_f, 3), "mm")
-        print("Fuel orifice distance (manifold): ", round(d_man_f, 3), "mm")
-
-    except (ValueError, ZeroDivisionError):  # Exception thrown
-        print("\n", "Error while attempting to solve. Please enter a valid value"
-              " for every parameter.")
-
-def injector_main(a,b):
-    pass
+def injector_main(vars):
+    calculate(vars)
 
 
 
 if __name__ == "__main__":
-    prompt()
+    vars = input_variables()
+    calculate(vars)
+    print_outputs(vars)
