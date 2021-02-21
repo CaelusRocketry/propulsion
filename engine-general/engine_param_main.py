@@ -67,7 +67,7 @@ def take_all_inputs():
         print("Please ensure input.txt is named correctly and in the correct directory.")
     except ValueError:
         print("Please ensure inputs are entered as floats with no other text in the file")
-    vars["P3"] = get_exit_pressure(vars[altitude])
+    vars["P3"] = get_exit_pressure(vars["altitude"])
     ceagui_name = file_name + "_ceagui"
     return vars, ceagui_name
 

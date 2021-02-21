@@ -180,7 +180,7 @@ def calculate(vars):
 
 def print_outputs(vars):
     for key in vars:
-        print(f"{key} = {vars["key"]}")
+        print(f"{key} = {vars[key]}")
 
 
 def nozzle_main(vars):

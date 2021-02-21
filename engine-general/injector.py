@@ -136,12 +136,15 @@ def calculate(vars):
         vars["d_man_o"] = d_man_o
         vars["d_man_f"] = d_man_f
         vars["d_man_o"] = d_man_o
-        return vars
+    except (ValueError, ZeroDivisionError):  # Exception thrown
+        print("\n", "Error while attempting to solve. Please enter a valid value for every parameter.")
+    
+    return vars
 
 
 def print_out():
     for key in vars:
-        print(f"{key} = {vars["key"]}")
+        print(f"{key} = {vars[key]}")
 
 def injector_main(vars):
     calculate(vars)
