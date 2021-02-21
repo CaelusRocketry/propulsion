@@ -166,6 +166,8 @@ def print_outputs(vars):
 
 
 def cea_main(vars, ceagui_name):
+    py_dir = os.path.dirname(__file__)
+    os.chdir(py_dir)
     ceagui_inp(vars, ceagui_name)
     driver_cea(ceagui_name)
     cea_outparse(ceagui_name)
