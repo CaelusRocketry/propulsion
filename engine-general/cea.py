@@ -3,61 +3,14 @@
 # Original code & methods sourced from Jason Chen
 # Project Caelus, 04 February 2021
 
-# TODO: @Tanmay: Remove all uses of "global" and instead just pass around variables using return
-# TODO: @Tanmay: Use a config.json file to take all inputs. Should have a single input() call only at the beginning asking
-# whether the user wants to input via input() or via the config.json. Google for JSON tutorials; it's basically a dictionary.
-# TODO: @Tanmay: Make the for loop in calcluate() that gets CEA vars write to a dictionary, not an array (so it's cleaner)
-# TODO: @Tanmay: Write the outputs to a .txt/.csv file, and also print. Should output both inputs and outputs.
+
 
 """
 INPUTS:
-    Driving Parameters
-        - F = Thrust (N)
-        - P0 = Chamber pressure (Pa)
-        - ALT = Optimal altitude (m)
-    New
-        - B = Burn time (s)
-        - Cv = Coefficient of flow (gal/min - sqrt(psi))
-        - U = Ullage (% of tank volume)
-        - Sg = Specific gravity (dimensionless)
-        - DP = Pressure drop across injector (%)
-        - VT = Tank volume (L)
-        - T = Temperature (K)
     CEAgui
-        - k = Ratio of specific heats (dimensionless)
-        - T0 = Combustion Temperature (K)
-        - M = Molecular Mass of Gas (kg/mol)
-        - O/F = Oxidizer to Fuel Ratio
-        - L* = Characteristic Chamber Length (m)
-
+        - O/F = 
 OUTPUTS:
-    Nozzle & General Engine Parameters
-        - Isp = Specific impulse at altitude, sec
-        - Tt = Throat temperature, K
-        - v2 = Effective exhaust velocity, m/sec
-        - mdot = Mass flow rate, kg/sec
-        - mdot_oxidizer = Mass flow rate of the oxidizer, kg/sec
-        - mdot_fuel = Mass flow rate of the fuel, kg/sec
-        - PR = Pressure ratio, dimensionless
-        - ER = Expansion ratio, dimensionless
-        - Te = Exit temperature, K
-        - Mnum = Exit Mach number, dimensionless
-        - At = Area of the throat, m^2
-        - Ae = Area of the exit, m^2
-        - Rt = Radius of the throat, m
-        - Re = Radius of the exit, m
-        - Rc = Radius of the chamber, m
-        - Lc = Length of the chamber, m
-        - Ldn = Length of the diverging nozzle, m
-        - Lcn = Length of the converging nozzle, m
-    New
-        - Initial fuel mass
-        - Initial oxidizer mass
-        - Volumetric fuel flow rate
-        - Volumetric oxidizer flow rate
-        - System pressure drop (?)
-        - Initial ethanol np.tank pressure
-        - Initial nitrous np.tank pressure
+    
 """
 
 import os
@@ -71,13 +24,9 @@ import threading
 import pyautogui
 
 # Preprocessing
-py_dir = os.path.dirname(__file__)
-os.chdir(py_dir)
-cea_exe_dir = "./CEAexec/cea-exec/"
 
 # Input non-CEAgui vars from text file
 def input_variables():
-    global file_name, vars
     print("Input variables using a .txt file. Enter floats only. Ensure file is within folder of .py file.")
     print("Please list them in the order they are listed at the top of the file, i.e. \n Thrust=___ \n Chamber Pressure=___ \n . \n . \n .")
     
@@ -95,7 +44,9 @@ def input_variables():
         print("Please ensure input.txt is named correctly and in the correct directory.")
     except ValueError:
         print("Please ensure inputs are entered as floats with no other text in the file")
-    vars["frozen"] = "frozen nfz=1" if bool(vars["frozen"]) else "equilibrium"
+    vars["P3"] = get_exit_pressure(vars["altitude"])
+    ceagui_name = file_name + "_ceagui"
+    return vars, ceagui_name
 
 
 def get_exit_pressure(h: int or float):
@@ -118,16 +69,15 @@ def get_exit_pressure(h: int or float):
     return P3
 
 
-def ceagui_inp():
-    vars["P3"] = get_exit_pressure(vars["altitude"])
+def ceagui_inp(vars, ceagui_name):
+    cea_exe_dir = "./CEAexec/cea-exec/"
     pressure_ratio = round(vars["P0"] / vars["P3"], 3)
-
+    frozen = "frozen nfz=1" if bool(vars["frozen"]) else "equilibrium"
     # Make the file
-    ceagui_name = file_name + "_ceagui"
     with open(cea_exe_dir + ceagui_name + ".inp", "w+") as f:
         line_1 = f"problem  case={ceagui_name} o/f={vars['o/f']},\n"
         f.write(line_1)
-        line_2 = f"      rocket  {vars['frozen']}\n"
+        line_2 = f"      rocket  {frozen}\n"
         f.write(line_2)
         line_3 = f"  p,bar={vars['P0']/100000},\n"
         f.write(line_3)
@@ -155,8 +105,8 @@ def type_with_delay(dir_name: str, delay: int or float):
     pyautogui.press("enter")
 
 
-def driver_cea():
-    ceagui_name = file_name + "_ceagui"
+def driver_cea(ceagui_name):
+    cea_exe_dir = "./CEAexec/cea-exec/"
     t1 = threading.Thread(target=type_with_delay, args=(ceagui_name, 0.25), daemon=True)
     t1.start()
     subprocess.call([cea_exe_dir + "FCEA2m.exe"],  cwd = cea_exe_dir)
@@ -165,8 +115,8 @@ def driver_cea():
    
 
 
-def cea_outparse():
-    ceagui_name = file_name + "_ceagui"
+def cea_outparse(ceagui_name):
+    cea_exe_dir = "./CEAexec/cea-exec/"
     csv_filename = f"{ceagui_name}.csv"
     cea_filename = f"{ceagui_name}.out"
     delimiter = "THEORETICAL ROCKET PERFORMANCE"
@@ -208,31 +158,25 @@ def cea_outparse():
             vars[row[i].split()[0]] = float(vals[i]) 
             i += 1
     print("Operation complete. CSV file saved to {}".format(csv_filename))
-    print(vars)
 
-def print_outputs():
-    pass
-
-
-def print_header(string, key=lambda: 30):
-    """
-    Provides an easy way to print out a header.
-    :param string: The header as a string.
-    :param key: Length of the message.
-    """
-    print("\n")
-    print((len(string) % 2)*'-' + '{:-^{width}}'.format(string, width=key()))
+def print_outputs(vars):
+    for key in vars:
+        print(f"{key} = {round(vars[key], 3)}")
 
 
-def cea_main(v):
-    global vars = v
-    ceagui_inp()
-    driver_cea()
-    return vars
+
+def cea_main(vars, ceagui_name):
+    ceagui_inp(vars, ceagui_name)
+    driver_cea(ceagui_name)
+    cea_outparse(ceagui_name)
 
 if __name__ == "__main__":
-    input_variables()
-    ceagui_inp()
-    driver_cea()
-    cea_outparse()
-    print_outputs()
+    py_dir = os.path.dirname(__file__)
+    os.chdir(py_dir)
+    temp = input_variables()
+    vars = temp[0]
+    ceagui_name = temp[1]
+    ceagui_inp(vars, ceagui_name)
+    driver_cea(ceagui_name)
+    cea_outparse(ceagui_name)
+    print_outputs(vars)
