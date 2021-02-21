@@ -158,7 +158,7 @@ def cea_outparse(ceagui_name, vars):
             vars[row[i].split()[0]] = float(vals[i]) 
             i += 1
     print("Operation complete. CSV file saved to {}".format(csv_filename))
-    return vars
+
 
 def print_outputs(vars):
     for key in vars:
@@ -169,8 +169,7 @@ def print_outputs(vars):
 def cea_main(vars, ceagui_name):
     ceagui_inp(vars, ceagui_name)
     driver_cea(ceagui_name)
-    vars = cea_outparse(ceagui_name, vars)
-    return vars
+    cea_outparse(ceagui_name, vars)
 
 if __name__ == "__main__":
     py_dir = os.path.dirname(__file__)
